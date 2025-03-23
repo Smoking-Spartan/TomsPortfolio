@@ -4,11 +4,16 @@
 <head>
     <meta http-equiv="refresh" content="0; url=/" />
     <title>Redirecting...</title>
-    <script>
-        // Get the current path
-        const redirectTo = location.pathname.replace(/\/TomsPortfolio/, '');
+    <script>        
+        var repo = '/TomsPortfolio';
         // Redirect to index.html with the original path saved in the hash
-        location.replace(`/TomsPortfolio/index.html#${redirectTo}`);
+        // Get the full path after the repo name
+        var pathname = location.pathname;
+        var pathAfterRepo = pathname.startsWith(repo) ? pathname.slice(repo.length) : pathname;
+
+        // Redirect to index.html with hash fallback
+        var redirectUrl = repo + '/index.html#' + pathAfterRepo + location.search + location.hash;
+
     </script>
 </head>
 <body>
