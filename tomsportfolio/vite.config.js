@@ -5,7 +5,7 @@ import plugin from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => (
     {
         plugins: [plugin()],
-        base: mode === 'production' ? '/TomsPortfolio-QA/' : '/',
+        base: mode === 'production' ? '/TomsPortfolio/' : '/',
         server: {
             port: 11534,
         }
