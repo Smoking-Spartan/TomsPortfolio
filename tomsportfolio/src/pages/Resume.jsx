@@ -3,6 +3,9 @@ export default function Resume() {
     return (
         <Layout>
             <h1>Toms Resume</h1>
+            <p className="text-center max-w-xl mx-auto text-gray-600 mb-6">
+                Here’s a quick look at my resume. You can preview it below or download a copy for later.
+            </p>
             <a
                 href={`${import.meta.env.BASE_URL}/Thomas_Evanko_Senior_Developer_Resume_Sanitized.pdf`}
                 download

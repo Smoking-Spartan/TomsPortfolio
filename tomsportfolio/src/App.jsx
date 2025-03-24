@@ -12,7 +12,6 @@ function App() {
   return (
       <Router>
           <Navbar />
-          <div className="container mt-4">
               <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/resume" element={<Resume />} />
@@ -20,7 +19,6 @@ function App() {
                   <Route path="/hobbies" element={<Hobbies />} />
                   <Route path="/coding-nightmares" element={<CodingNightmares />} />
               </Routes>
-          </div>
       </Router>
   )
 }

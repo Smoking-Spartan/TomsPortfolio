@@ -1,8 +1,8 @@
 function Layout({ children }) {
     return (
-        <div className="containter pt-5 mt-5">
+        <div className="containter py-4">
             {children}
-            <p>Tom's footer</p>
+            <p>Tom's footer test</p>
         </div>
     );
 }
