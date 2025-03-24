@@ -1,6 +1,6 @@
 ﻿import Layout from '../components/Layout';
 import NightmareCard from '../components/NightmareCard';
-import { nightmares } from '../data/nightmares';
+import { nightmares } from '../data/nightmares'; //source for the coding nightmares Ive dealt with
 export default function CodingNightmares() {
     return (
         <Layout>

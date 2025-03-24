@@ -52,5 +52,18 @@
             "Thankfully I had a backup from that morning and restored it. Still lost about an hour’s worth of live data.",
             "After that, I wrote role-based DB access checks and a live auditing trigger that logs all delete/update operations."
         ]
+    },
+    {
+        id: 'rogue-sql',
+        title: '💣 We Let Our Contractor DBA go, Can you Maintain the databases?',
+        summary: 'Letting go of our Conrtractor DBA, I had to recreate the datbase backup process, maintaining the tables, indexes, and monitor solar winds',
+        solution:
+            'Restored backup, added role-based permission checks, and wrote a SQL logging trigger for live auditing.',
+        content: [
+            "This one still gives me trust issues. A contractor thought he was in dev — he was in prod.",
+            "Ran a script to clean up a test record, but forgot the `WHERE` clause. Deleted client data from 7 different orgs.",
+            "Thankfully I had a backup from that morning and restored it. Still lost about an hour’s worth of live data.",
+            "After that, I wrote role-based DB access checks and a live auditing trigger that logs all delete/update operations."
+        ]
     }
 ];
