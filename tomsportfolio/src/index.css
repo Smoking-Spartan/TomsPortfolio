@@ -51,6 +51,22 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+/* Add this CSS to make the video responsive */
+.responsive-video {
+  width: 100%;
+  height: auto; /* Maintains aspect ratio */
+}
+.container {
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  margin: 0 auto;
+  text-align: center;
+}
+.SmsOptInLogo {
+    max-height: 15em; /* Remove fixed height */
+    padding: 0; /* Remove padding or adjust as needed */
+    transition: filter 300ms; /* Keep transition if needed */
+}
 
 @media (prefers-color-scheme: light) {
   :root {

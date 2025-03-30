@@ -8,5 +8,6 @@ export default defineConfig(({ mode }) => (
         base: mode === 'production' ? '/TomsPortfolio/' : '/TomsPortfolio-QA/',
         server: {
             port: 11534,
+            strictPort: true
         }
-    }));
+}));
