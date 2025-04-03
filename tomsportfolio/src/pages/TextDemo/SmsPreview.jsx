@@ -60,7 +60,7 @@ export default function TextPreview() {
             alt="Contact" 
             className="header-logo"
           />
-          <span className="contact-name">{contactName}</span>
+          <span className="contact-name">Tom Evanko</span>
         </div>
 
         {/* Instruction Bubble */}

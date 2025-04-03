@@ -113,9 +113,21 @@ const SmsOptIn = ({ workOrderId }) => {
             </div>
           </div>
           <div className="mb-3">
-            <input type="checkbox" id="optIn" name="optIn" className="me-2" onChange={() => setIsConsenting(!isConsenting)}/>
-            <label htmlFor="optIn"> I agree to receive text message surveys and alerts from Tom Built This.</label>
+          <div className="custom-checkbox-wrapper">
+            <input 
+              type="checkbox" 
+              id="optIn" 
+              name="optIn" 
+              onChange={() => setIsConsenting(!isConsenting)}
+            />
+            <label htmlFor="optIn" className="custom-checkbox-label">
+              <span className="checkbox-custom"></span>
+              <span className="checkbox-text">
+                I agree to receive text message surveys and alerts from Tom Built This.
+              </span>
+            </label>
           </div>
+        </div>
           <div className="form-group text-center">
             <button
               type="submit"
