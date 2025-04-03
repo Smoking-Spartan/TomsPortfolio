@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {BaseLayout } from '../../components/Layout';
 
-const SmsOptIn = () => {
+const SmsOptIn = ({ workOrderId }) => {
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
     countryCode: '1', // Default to US
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConsenting, setIsConsenting] = useState(false);
   const navigate = useNavigate(); // Import useNavigate
 
   const handleInputChange = (e) => {
@@ -21,20 +23,33 @@ const SmsOptIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate phone number length
+    if (formData.phoneNumber.length < 9) {
+      alert('Phone number must be at least 9 digits long');
+      return;
+    }
     setIsSubmitting(true);
+    
 
     try {
-      const response = await axios.post(`/OptIn/AddContact`, {
+      // Comment out the actual API call for now
+      /*
+      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/OptIn/AddContact`, {
         phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
-        name: formData.name,        
+        name: formData.name,
+        workOrderId: workOrderId,
       });
-      if (response.status === 200) {
-        // Handle successful submission (e.g., show a success message)
-        navigate('/TextDemo/SmsPreview', { state: { 
-          phoneNumber: `${formData.countryCode}${formData.phoneNumber}` },
-          contactName: formData.name
-         });
-      }
+      */
+      
+      // Simulate successful submission
+      navigate('/text-demo/sms-preview', { 
+        state: { 
+          phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
+          contactName: formData.name,
+          justOptedIn: true // Add this flag to show success message
+        }
+      });
+      
     } catch (error) {
       const errorMessage = error.response?.data || 'An error occurred';
       alert(errorMessage);
@@ -44,76 +59,80 @@ const SmsOptIn = () => {
   };
 
   return (
-    <div id="optInBody">
-      <h3 className="text-center">Text Message Demo</h3>
-      <div className="card">
-        <div className="card-header text-center">
-          Please provide your phone number below if you would like to subscribe for Text Message Surveys
-        </div>
-      </div>
-      <br />
-      <form id="contactupdate" onSubmit={handleSubmit}>
-        <div className="row">
-          <label className="col-sm-3">Name:</label>
-          <div className="col-sm-9">
-            <input
-              type="text"
-              id="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              title="Please use only letters, hyphens, and apostrophes"
-              required
-              className="form-control"
-            />
+    <BaseLayout>
+      <img src={`${import.meta.env.BASE_URL}/media/TBT_Logo.png`} alt="Logo" className="h-8 mr-2 SmsOptInLogo" />
+      <div id="optInBody" className="container mt-4">
+        <h3 className="text-center mb-4">Text Message Demo</h3>
+        <div className="card mb-4">
+          <div className="card-header text-center">
+            Please provide your phone number below if you would like to subscribe for Text Message Surveys
           </div>
         </div>
-        <br />
-        <br />
-        <div className="row">
-          <label className="col-sm-3" htmlFor="PhoneNumber">Phone Number:</label>
-          <div className="col-sm-9">
-            <div className="input-group">
-              <select
-                className="form-select country-code-select"
-                id="countryCode"
-                name="countryCode"
-                value={formData.countryCode}
-                onChange={handleInputChange}
-              >
-                <option value="1" selected>+1 (US)</option>
-                <option value="44">+44 (UK)</option>
-                <option value="52">+52 (MX)</option>
-              </select>
+        <form id="contactupdate" onSubmit={handleSubmit}>
+          <div className="mb-3 row">
+            <label className="col-sm-3 col-form-label">Name:</label>
+            <div className="col-sm-9">
               <input
                 type="text"
-                className="form-control"
-                id="PhoneNumber"
-                name="phoneNumber"
-                inputMode="numeric"
-                value={formData.phoneNumber}
+                id="Name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
+                title="Please use only letters, hyphens, and apostrophes"
                 required
+                className="form-control"
               />
             </div>
           </div>
-        </div>
-        <div className="form-group text-center">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </button>
-        </div>
-      </form>
-      <div className="card text-center">
-        <div className="card-footer text-muted">
-          By pressing "Submit," you consent to receive text messages from Tom Built This at the phone number provided. These messages may include requests for feedback on your experience and other business-related communications. Message frequency may vary. Standard message and data rates may apply. Reply STOP at any time to opt out.
+          <div className="mb-3 row">
+            <label className="col-sm-3 col-form-label" htmlFor="PhoneNumber">Phone Number:</label>
+            <div className="col-sm-9">
+              <div className="input-group">
+                <select
+                  className="form-select country-code-select"
+                  id="countryCode"
+                  name="countryCode"
+                  value={formData.countryCode}
+                  onChange={handleInputChange}
+                >
+                  <option value="1">+1 (US)</option>
+                  <option value="44">+44 (UK)</option>
+                  <option value="52">+52 (MX)</option>
+                </select>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="PhoneNumber"
+                  name="phoneNumber"
+                  inputMode="numeric"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <input type="checkbox" id="optIn" name="optIn" className="me-2" onChange={() => setIsConsenting(!isConsenting)}/>
+            <label htmlFor="optIn"> I agree to receive text message surveys and alerts from Tom Built This.</label>
+          </div>
+          <div className="form-group text-center">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting || !isConsenting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          </div>
+        </form>
+        <div className="card text-center mt-4">
+          <div className="card-footer text-muted">
+            By checking the box and clicking "Submit," you agree to receive occasional text messages from Tom Built This at the number provided. These messages may include short surveys or demo-related alerts. Message frequency will be limited. Standard message and data rates may apply. Reply STOP at any time to opt out
+          </div>
         </div>
       </div>
-    </div>
+    </BaseLayout>
   );
 };
 

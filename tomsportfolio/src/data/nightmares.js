@@ -54,7 +54,7 @@
         ]
     },
     {
-        id: 'rogue-sql',
+        id: 'databaseContractor',
         title: '💣 We Let Our Contractor DBA go, Can you Maintain the databases?',
         summary: 'Letting go of our Conrtractor DBA, I had to recreate the datbase backup process, maintaining the tables, indexes, and monitor solar winds',
         solution:

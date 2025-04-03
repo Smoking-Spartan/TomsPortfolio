@@ -1,7 +1,7 @@
-﻿import Layout from '../components/Layout';
+﻿import {MainLayout} from '../components/Layout';
 export default function Resume() {
     return (
-        <Layout>
+        <MainLayout>
             <h1>Toms Resume</h1>
             <p className="text-center max-w-xl mx-auto text-gray-600 mb-6">
                 Here’s a quick look at my resume. You can preview it below or download a copy for later.
@@ -26,6 +26,6 @@ export default function Resume() {
                     style={{ border: '1px solid #ccc', borderRadius: '8px' }}
                     ></iframe>
             </div>
-        </Layout>
+        </MainLayout>
     )
 }

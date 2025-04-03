@@ -1,9 +1,16 @@
-function Layout({ children }) {
-    return (
-        <div className="containter py-4">
-            {children}
-        </div>
-    );
-}
+// Create a BaseLayout (no navigation) and MainLayout (with navigation)
+import Navbar from './Navbar';
+const BaseLayout = ({ children }) => (
+  <div className="containter py-4">
+    {children}
+  </div>
+);
 
-export default Layout;
+const MainLayout = ({ children }) => (
+  <div className="containter py-4">
+    <Navbar />
+    {children}
+  </div>
+);
+
+export { BaseLayout, MainLayout };

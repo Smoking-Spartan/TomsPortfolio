@@ -1,9 +1,9 @@
-﻿import Layout from '../components/Layout';
+﻿import {MainLayout} from '../components/Layout';
 import NightmareCard from '../components/NightmareCard';
 import { nightmares } from '../data/nightmares'; //source for the coding nightmares Ive dealt with
 export default function CodingNightmares() {
     return (
-        <Layout>
+        <MainLayout>
             <h1 className="">Tom's Coding Nightmares</h1>
             {nightmares.map(n => (
                 <NightmareCard key={n.id}
@@ -17,6 +17,6 @@ export default function CodingNightmares() {
 
                 </NightmareCard>
             ))}
-        </Layout>
+        </MainLayout>
     );
 }
