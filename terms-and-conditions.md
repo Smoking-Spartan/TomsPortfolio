@@ -1,6 +1,6 @@
 # Terms and Conditions
 
-Last updated: [Current Date]
+Last updated: April 11, 2025
 
 ## Welcome to TomBuiltThis
 
@@ -43,5 +43,4 @@ TomBuiltThis reserves the right to revise these terms and conditions at any time
 
 If you have any questions about these Terms and Conditions, please contact us:
 
-- Email: [Your Email]
-- Website: [Your Website] 
+- Email: tevanko@outlook.com
