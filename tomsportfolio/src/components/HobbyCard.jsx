@@ -60,7 +60,7 @@ function HobbyCard({ hobby }) {
                             <div className="row g-3">
                                 {mediaGallery.map((img, i) => (
                                     <div className="col-6 col-md-4" key={i}>
-                                        <img src={`${import.meta.env.BASE_URL}${img}`} 
+                                        <img src={img} 
                                         className="img-fluid rounded shadow-sm" 
                                         alt={`Pizza ${i + 1}`} 
                                         onClick={() => handleImageClick(img)}
@@ -70,9 +70,9 @@ function HobbyCard({ hobby }) {
                             </div>
                         )}
                         {mediaType === 'video' ? (
-                            <video src={`${import.meta.env.BASE_URL}${mediaUrl}`} controls className="w-100 rounded" />
+                            <video src={mediaUrl} controls className="w-100 rounded" />
                         ) : (
-                            <img src={`${import.meta.env.BASE_URL}${mediaUrl}`} alt={title} className="img-fluid rounded" />
+                            <img src={mediaUrl} alt={title} className="img-fluid rounded" />
                         )}
                     </div>
                 )}
@@ -119,7 +119,7 @@ function HobbyCard({ hobby }) {
                         ×
                     </button>
                     <img 
-                        src={`${import.meta.env.BASE_URL}${selectedImage}`}
+                        src={selectedImage}
                         style={{
                             width: '100%',
                             height: 'auto',

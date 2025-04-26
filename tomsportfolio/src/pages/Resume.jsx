@@ -7,7 +7,7 @@ export default function Resume() {
                 Here’s a quick look at my resume. You can preview it below or download a copy for later.
             </p>
             <a
-                href={`${import.meta.env.BASE_URL}/Thomas_Evanko_Senior_Developer_Resume_Sanitized.pdf`}
+                href={`./Thomas_Evanko_Senior_Developer_Resume_Sanitized.pdf`}
                 download
                 className="btn btn-primary mt-3"
                 target="_blank"
@@ -19,7 +19,7 @@ export default function Resume() {
             <br />
             <div className="resume-preview d-none d-md-block">
                 <iframe
-                    src={`${import.meta.env.BASE_URL}/Thomas_Evanko_Senior_Developer_Resume_Sanitized.pdf`}
+                    src={`./Thomas_Evanko_Senior_Developer_Resume_Sanitized.pdf`}
                     width="1250px"
                     height="1000px"
                     title="Resume Preview"
