@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.data;
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250406120156_InitialPostgresMigration")]
+    partial class InitialPostgresMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,16 +50,11 @@ namespace server.Migrations
                     b.Property<int>("SurveyId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SurveyResponseId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
                     b.HasIndex("SurveyId");
-
-                    b.HasIndex("SurveyResponseId");
 
                     b.ToTable("Answers");
                 });
@@ -71,9 +69,6 @@ namespace server.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime>("LastActiveTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -161,33 +156,6 @@ namespace server.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("server.Models.SurveyResponse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ContactId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SurveyId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SurveyResponses");
-                });
-
             modelBuilder.Entity("server.Models.SurveyTemplate", b =>
                 {
                     b.Property<int>("Id")
@@ -226,10 +194,6 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("server.Models.SurveyResponse", null)
-                        .WithMany("Answers")
-                        .HasForeignKey("SurveyResponseId");
-
                     b.Navigation("Question");
 
                     b.Navigation("Survey");
@@ -265,11 +229,6 @@ namespace server.Migrations
             modelBuilder.Entity("server.Models.Question", b =>
                 {
                     b.Navigation("PossibleAnswers");
-                });
-
-            modelBuilder.Entity("server.Models.SurveyResponse", b =>
-                {
-                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("server.Models.SurveyTemplate", b =>

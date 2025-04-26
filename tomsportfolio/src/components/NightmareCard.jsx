@@ -14,13 +14,27 @@ function NightmareCard({ title, summary, children }) {
         }
     }, [open]);
 
+    const handleCardClick = (e) => {
+        // Prevent the click from triggering if the button was clicked
+        if (e.target.tagName !== 'BUTTON') {
+            setOpen(!open);
+        }
+    };
+
     return (
-        <div className="card mb-3 shadow-sm">
+        <div 
+            className="card mb-3 shadow-sm nightmare-card" 
+            onClick={handleCardClick}
+            style={{ cursor: 'pointer' }}
+        >
             <div className="card-header d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">{title}</h5>
                 <button
                     className="btn btn-sm btn-outline-secondary"
-                    onClick={() => setOpen(!open)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setOpen(!open);
+                    }}
                 >
                     {open ? 'Collapse' : 'Read More'}
                 </button>

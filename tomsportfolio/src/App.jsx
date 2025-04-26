@@ -6,22 +6,28 @@ import Resume from './pages/Resume';
 import TextDemo from './pages/TextDemo';
 import Hobbies from './pages/Hobbies';
 import CodingNightmares from './pages/CodingNightmares';
-import SmsOptIn from './pages/TextDemo/SmsOptIn';
+import OptIn from './pages/TextDemo/OptIn';
 import SmsPreview from './pages/TextDemo/SmsPreview';
+import Survey from './pages/TextDemo/Survey';
+import TermsAndConditions from './pages/Legal/TermsAndConditions';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 
 function App() {
   return (
-      <Router>
-              <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/resume" element={<Resume />} />
-                  <Route path="/text-demo" element={<TextDemo />} />
-                  <Route path="/hobbies" element={<Hobbies />} />
-                  <Route path="/coding-nightmares" element={<CodingNightmares />} />
-                  <Route path="/text-demo/sms-opt-in" element={<SmsOptIn />} />
-                  <Route path="/text-demo/sms-preview" element={<SmsPreview />} />
-              </Routes>
-      </Router>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/resume" element={<Resume />} />
+        <Route path="/text-demo" element={<TextDemo />} />
+        <Route path="/hobbies" element={<Hobbies />} />
+        <Route path="/coding-nightmares" element={<CodingNightmares />} />
+        <Route path="/text-demo/opt-in" element={<OptIn />} />
+        <Route path="/text-demo/sms-preview" element={<SmsPreview />} />
+        <Route path="/text-demo/survey" element={<Survey />} />
+        <Route path="/legal/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+      </Routes>
+    </Router>
   )
 }
 

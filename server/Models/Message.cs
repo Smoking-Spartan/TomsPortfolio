@@ -10,5 +10,23 @@
 
         public int? ContactId { get; set; }
         public Contact? Contact { get; set; }
+        public DateTime? DeliveredAt { get; set; }
+        public string? ErrorMessage { get; set; }
+
+    }
+    public enum MessageStatus
+    {
+        Pending,
+        Sent,
+        Delivered,
+        Failed
+    }
+
+    public enum MessageType
+    {
+        Survey,
+        Reminder,
+        OptInConfirmation,
+        OptOutConfirmation
     }
 }

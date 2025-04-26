@@ -15,55 +15,124 @@
         ]
     },
     {
-        id: 'demo-crunch',
-        title: '🔥 The 2AM Text Demo Fire Drill',
-        summary: '48 hours. No specs. No QA. Just pressure and adrenaline.',
-        solution:
-            'Built a full opt-in flow and chained survey delivery in React with SMS triggers. Saved the client, stabilized the team.',
-        content: [
-            "It started on a Thursday when Doug mentioned — casually — that a client was threatening to walk.",
-            "No requirements. No API documentation. No staging environment. Just the words: 'We need this demo live by Monday.'",
-            "I locked in. Built a React frontend for opt-ins. Wired up Vonage SMS. Chained to the survey system. Pulled completion data. Verified messages.",
-            "Worked through the weekend. Slept 4 hours across 2 days. Got it done. And the client stayed."
+        "id": "next-identifier-roulette",
+        "title": "🎲 The Next Identifier Roulette Table",
+        "summary": "A custom SQL table was used to manually track IDs, introducing concurrency issues and unnecessary logic.",
+        "solution": "Replaced usages with database-generated identities or safe defaults. Reduced object creation overhead and eliminated race conditions.",
+        "content": [
+          "Instead of using identity columns or GUIDs, the system relied on a custom table called `ltblNextIdentifier`.",
+          "Every time an object was created, the code would fetch the next value from this table, increment it, and hope no one else was doing the same.",
+          "This introduced race conditions, added database overhead, and was completely avoidable."
         ]
-    },
+      },
     {
-        id: 'ghost-bug',
-        title: '👻 The Ghost Bug',
-        summary: 'A phantom bug that only appeared on Tuesdays when Jill wasn’t watching.',
-        solution:
-            'Tracked it to stale cache after an inconsistent deployment. Added QA-verified logs and flushed prod cache.',
-        content: [
-            "Users kept reporting a weird bug that we could never replicate. QA swore it was fake. I swore I was losing my mind.",
-            "After combing logs and checking every build artifact, I realized prod had stale JS files that weren’t being overwritten on deploy.",
-            "It only triggered on edge-case input *and* when hitting the old cached script. Nightmare.",
-            "Flushed the CDN. Added deployment logging. QA added cache-buster checks. Never happened again."
+        "id": "qa1-collapse",
+        "title": "🧨 The Great QA1 Collapse",
+        "summary": "QA1 crashed because a senior developer bypassed source control using Beyond Compare.",
+        "solution": "Identified missing `bower_components` and corrupted `lib.js`. Restored correct versions, documented safe deploy practices, and put safeguards in place.",
+        "content": [
+          "Our QA1 environment suddenly stopped loading any static assets.",
+          "Turns out a senior developer used Beyond Compare to push files manually from his local machine, wiping out `bower_components` and replacing `lib.js` with a 2KB husk.",
+          "Nobody knew what happened until I pieced it together hours later, at a bar, when it clicked.",
+          "Logged in remotely, restored from a local backup, and got QA1 live again before anyone else even knew what broke."
         ]
-    },
-    {
-        id: 'rogue-sql',
-        title: '💣 The Rogue SQL Script',
-        summary: 'When a contractor ran a “quick fix” and nuked 200 client records.',
-        solution:
-            'Restored backup, added role-based permission checks, and wrote a SQL logging trigger for live auditing.',
-        content: [
-            "This one still gives me trust issues. A contractor thought he was in dev — he was in prod.",
-            "Ran a script to clean up a test record, but forgot the `WHERE` clause. Deleted client data from 7 different orgs.",
-            "Thankfully I had a backup from that morning and restored it. Still lost about an hour’s worth of live data.",
-            "After that, I wrote role-based DB access checks and a live auditing trigger that logs all delete/update operations."
+      },
+      {
+        "id": "bad-dev-number-fetch",
+        "title": "🔢 A Dev’s Magical Number Fetcher",
+        "summary": "Why default to 0 when you can query the DB for a value you’ll overwrite anyway?",
+        "solution": "Refactored logic to default to 0. Avoided an unnecessary DB hit every time an object was created.",
+        "content": [
+          "A dev ran into an issue: a required field needed a number during object creation.",
+          "Instead of defaulting it, he wrote a complex function that hit the DB every time — just to fetch a number that got replaced later.",
+          "It added overhead, race conditions, and confusion. All for nothing.",
+          "Suggested we just default to 0 and let the DB update it properly, issue gone."
         ]
-    },
-    {
-        id: 'databaseContractor',
-        title: '💣 We Let Our Contractor DBA go, Can you Maintain the databases?',
-        summary: 'Letting go of our Conrtractor DBA, I had to recreate the datbase backup process, maintaining the tables, indexes, and monitor solar winds',
-        solution:
-            'Restored backup, added role-based permission checks, and wrote a SQL logging trigger for live auditing.',
-        content: [
-            "This one still gives me trust issues. A contractor thought he was in dev — he was in prod.",
-            "Ran a script to clean up a test record, but forgot the `WHERE` clause. Deleted client data from 7 different orgs.",
-            "Thankfully I had a backup from that morning and restored it. Still lost about an hour’s worth of live data.",
-            "After that, I wrote role-based DB access checks and a live auditing trigger that logs all delete/update operations."
+      },
+      {
+        "id": "non-sargable-phone-cleaner",
+        "title": "📞 The Non-SARGable Phone Cleaner",
+        "summary": "Phone number comparisons called a SQL function to strip non-numeric characters, inside `WHERE` clauses.",
+        "solution": "Moved sanitization to the app layer and enforced normalization on insert. Rewrote queries to use indexed columns and raw comparisons.",
+        "content": [
+          "Someone thought the best place to clean up phone numbers was… in the query itself.",
+          "So every time we ran a `SELECT` or `WHERE` clause on a phone number, it called a scalar function to strip out anything that wasn’t a digit.",
+          "Which meant no indexes. Ever. On phone numbers. Across millions of rows.",
+          "I refactored it by sanitizing input during ingestion, storing only digits, and rewriting the logic to compare clean values directly."
         ]
-    }
+      },
+      {
+        "id": "import-bottleneck",
+        "title": "🛑 The Import Bottleneck That Froze the World",
+        "summary": "Single row inserts during data imports brought the system to its knees, even for unrelated users.",
+        "solution": "Rewrote import logic to use bulk operations. Added isolation to prevent production contention. Deferred non-critical writes.",
+        "content": [
+          "The import process inserted each row one by one, hundreds, sometimes thousands, directly into production tables.",
+          "No batching. No queue. No async. Just raw, blocking inserts while users were live on the system.",
+          "The result? System-wide slowdowns. Analyst pages froze. Clients couldn't view web pages. Everything spun.",
+          "I rewrote the logic to batch inserts using table-valued parameters and ensured it didn’t block primary workflows."
+        ]
+      },
+      {
+        "id": "websurvey-limbo",
+        "title": "🌀 WebSurvey: The Four-Year Spiral",
+        "summary": "A nearly complete project stuck in limbo due to shifting priorities and no ownership.",
+        "solution": "Merged critical branches, resolved edge case bugs, documented final deployment steps — but management never gave the go-ahead.",
+        "content": [
+          "Started in 2020. Still not live.",
+          "Despite being 95% done, WebSurvey kept getting deprioritized every time someone sneezed.",
+          "I fixed bugs, handled merges, and even built modular client based 'WebPlugins' that would isolation the unique client logic from the core WebSurvey codebase. Every time we were close, new ankle-biters popped up.",
+          "Eventually, I stopped pushing. Why finish a race when leadership won't let you cross the finish line?"
+        ]
+      },
+      {
+        "id": "aws-pipe-dream",
+        "title": "☁️ The Great AWS Pipe Dream",
+        "summary": "Two devs. No QA. No CI/CD. But sure, let’s promise AWS in three months.",
+        "solution": "Raised concerns repeatedly. Explained scope and resource gaps. Suggested phased migration with realistic timelines. Ignored.",
+        "content": [
+          "An old boss promised a full AWS migration to clients without asking any engineers or hiring anyone with cloud experience.",
+          "No CI/CD. No DevOps. No PM. No roadmap. No dedicated QA. No documentation on our applications functionality or workflows. Just vibes.",
+          "I warned them: two devs with no cloud experience can’t lift and shift 10+ legacy apps without imploding.",
+          "They nodded. Then went back to their PowerPoints."
+        ]
+      },
+      {
+        "id": "readpocalypse",
+        "title": "📉 Death by 74 Million Read Database Operations",
+        "summary": "A client viewing a single survey caused over 74.5 million database reads. Yes, millions.",
+        "solution": "Profiled the app using SQL Server Profiler. Identified N+1 queries and overzealous joins. Raised concerns repeatedly. Leadership still thinks 'the system works.'",
+        "content": [
+          "I was casually checking the profiler logs after a client complained about load time.",
+          "A single page view? 74.5 million reads.",
+          "Turns out, every related table was being joined, repeatedly, per item in a loop. Nested inside more loops. With no limit. No batching. No caching.",
+          "This wasn’t an edge case. It was production.",
+          "I documented it. I flagged it. I warned them. But they shrugged. And so, we continue, slowly, bleeding storage I/O on every click.",
+          "The conservative estimate for a client user viewing a survey: 15 dollars PER view"
+        ]
+      },
+      {
+        "id": "test-script-fantasy",
+        "title": "🧪 Just Write Some Tests",
+        "summary": "Boss asked for test scripts... after years of zero guidance or test planning.",
+        "solution": "Explained that testing needs direction, edge cases, and real use cases, not a vague request thrown over the fence.",
+        "content": [
+          "Boss: 'Can you write tests for WebSurvey?'",
+          "Me: 'What do you want tested?'",
+          "Boss: 'You know… the usual. Just make it work.'",
+          "After years of no QA investment, no testing standards, and no documentation, he wanted me to magically know what to test and how. Classic."
+        ]
+      },
+      {
+        "id": "client-messaging-stall",
+        "title": "📨 7 Years of Promises, 0 Delivery",
+        "summary": "Text-based client messaging sat on the shelf until I solo’d a demo under pressure.",
+        "solution": "Built it from scratch using Razor, Vonage, and .NET Core backend. Pushed a working MVP. Then... silence from leadership.",
+        "content": [
+          "Clients had begged for messaging tools for *years*.",
+          "Boss talked a big game but never greenlit anything.",
+          "I built the damn thing in a weekend, with no guidance, no documentation, and no QA support. It worked, showcasing the power of the new tech capabilites of the WebSurvey platform. Clients were excited asking 'Can we use this tomorrow?'. Then? Nothing. No rollout plan. No support. Just inertia.",
+          "It was a win. But also a warning — leadership doesn’t push the last inch."
+        ]
+      }
 ];

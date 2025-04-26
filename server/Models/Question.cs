@@ -6,6 +6,16 @@
         public int QuestionNumber { get; set; }
         public string Text { get; set; } = "";
 
-        public List<Answer> Answers { get; set; } = new();
+        public List<Answer> PossibleAnswers { get; set; } = new();
+        public bool IsRequired { get; set; }
+        public int OrderInSurvey { get; set; }
+        public QuestionType Type { get; set; }
+    }
+    public enum QuestionType
+    {
+        YesNo,
+        MultipleChoice,
+        Rating,
+        Text
     }
 }

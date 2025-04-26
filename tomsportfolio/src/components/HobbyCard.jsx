@@ -2,6 +2,8 @@
 
 function HobbyCard({ hobby }) {
     const [showMedia, setShowMedia] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);  // Add this state
+
     const {
         id,
         title,
@@ -14,7 +16,15 @@ function HobbyCard({ hobby }) {
         showPizza
     } = hobby;
 
+     const handleImageClick = (img) => {
+        setSelectedImage(img);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedImage(null);
+    };
     return (
+        <>
         <div className="card h-100 shadow-sm">
             <div className="card-body">
                 <h5 className="card-title">
@@ -50,7 +60,11 @@ function HobbyCard({ hobby }) {
                             <div className="row g-3">
                                 {mediaGallery.map((img, i) => (
                                     <div className="col-6 col-md-4" key={i}>
-                                        <img src={`${import.meta.env.BASE_URL}${img}`} className="img-fluid rounded shadow-sm" alt={`Pizza ${i + 1}`} />
+                                        <img src={`${import.meta.env.BASE_URL}${img}`} 
+                                        className="img-fluid rounded shadow-sm" 
+                                        alt={`Pizza ${i + 1}`} 
+                                        onClick={() => handleImageClick(img)}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -62,8 +76,62 @@ function HobbyCard({ hobby }) {
                         )}
                     </div>
                 )}
+                 
             </div>
         </div>
+         {/* Move the modal outside the card */}
+         {selectedImage && (
+            <div 
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1050,
+                    padding: '1rem'
+                }}
+                onClick={handleCloseModal}
+            >
+                <div style={{ position: 'relative', maxWidth: '90vw', width: '100%' }}>
+                    <button 
+                        style={{
+                            position: 'absolute',
+                            top: '1rem',
+                            right: '1rem',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '2rem',
+                            height: '2rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer'
+                        }}
+                        onClick={handleCloseModal}
+                    >
+                        ×
+                    </button>
+                    <img 
+                        src={`${import.meta.env.BASE_URL}${selectedImage}`}
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            borderRadius: '0.375rem'
+                        }}
+                        alt="Enlarged view"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            </div>
+        )}
+        </>
     );
 }
 

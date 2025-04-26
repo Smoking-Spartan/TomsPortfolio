@@ -4,17 +4,28 @@ using server.Services;
 using Vonage.Request;
 using Vonage;
 using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
+// Add Serilog as the logging provider
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddSerilog(dispose: true);
+});
 
 // Add services to the container.
-
-
-
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=appdata.db"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register CORS policy
 builder.Services.AddCors(options =>
@@ -44,10 +55,23 @@ var credentials = Credentials.FromApiKeyAndSecret(
     configuration["ApiSecret"]
 );
 
-var vonageClient = new VonageClient(credentials);
+builder.Services.AddSingleton(sp =>
+{
+    var credentials = Credentials.FromApiKeyAndSecret(
+        configuration["ApiKey"],
+        configuration["ApiSecret"]
+    );
+    return new VonageClient(credentials);
+});
 
-// Register the single instance
-//builder.Services.AddSingleton(vonageClient);
+// Register MessagingService with the phone number from configuration
+builder.Services.AddScoped<IMessagingService>(sp => 
+    new MessagingService(
+        sp.GetRequiredService<VonageClient>(),
+        configuration["VonagePhoneNumber"],
+        sp.GetRequiredService<ILogger<MessagingService>>()
+    )
+);
 
 var app = builder.Build();
 

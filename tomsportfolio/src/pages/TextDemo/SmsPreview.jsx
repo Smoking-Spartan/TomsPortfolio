@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {BaseLayout} from '../../components/Layout';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 export default function TextPreview() {
   const location = useLocation();
@@ -37,10 +38,34 @@ export default function TextPreview() {
     }
   }, [justOptedIn]);
 
-  const sendText = () => {
-    setSent(true);
-    setStep(4);
-    // You can hook this up to your backend via fetch/AJAX here
+  const sendText = async () => {
+    // Double check the phone number and contact name are still valid
+    if (!phoneNumber || !contactName) {
+      alert('Missing required information. Please refresh the page and try again.');
+      return;
+    }
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to send a text message to ${phoneNumber}?`
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/OptIn/SendText`, {
+        phoneNumber: phoneNumber,
+        messageContent: `Hey there ${contactName}! Here is an example text message you would receive from Tom Built This`
+      });
+      
+      setSent(true);
+      setStep(4);
+    } catch (error) {
+      console.error('Error sending text:', error);
+      alert('Failed to send text message. Please try again.');
+    }
   };
 
   return (
@@ -107,7 +132,7 @@ export default function TextPreview() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              Hey there {contactName}! Here is an example text message you would receive from Tom Built This
+              Tom Built This: {contactName}, you’ve subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.
             </motion.div>
           )}
         </AnimatePresence>
@@ -119,7 +144,7 @@ export default function TextPreview() {
         <div className="ios-message-bar">
           <div className="ios-message-input">
 
-            <span className="message-text">Hey there {contactName}! Here is an example text message you would receive from Tom Built This</span>
+            <span className="message-text">Tom Built This: {contactName}, you’ve subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.</span>
           </div>
           <button
             style={{ backgroundColor: '#007AFF' }}
@@ -143,7 +168,7 @@ export default function TextPreview() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              You should receive a text message shortly from +18333022086
+              You should receive a text message shortly from +12018994890
             </motion.div>
           )}
         </AnimatePresence>

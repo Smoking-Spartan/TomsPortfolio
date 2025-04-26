@@ -6,8 +6,11 @@
         public string Name { get; set; } = "";
         public string PhoneNumber { get; set; } = "";
         public DateTime OptInTime { get; set; } = DateTime.UtcNow;
+        public DateTime OptOutTime { get; set; } = DateTime.MinValue;
+        public DateTime LastActiveTime { get; set; } = DateTime.UtcNow;
+        public bool IsActive { get; set; } = true;
 
-        public List<Survey> Surveys { get; set; } = new();
+        public List<SurveyTemplate> Surveys { get; set; } = new();
         public List<Message> Messages { get; set; } = new();
     }
 }

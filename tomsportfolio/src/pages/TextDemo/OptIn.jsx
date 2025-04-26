@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {BaseLayout } from '../../components/Layout';
 
 const SmsOptIn = ({ workOrderId }) => {
@@ -32,14 +32,12 @@ const SmsOptIn = ({ workOrderId }) => {
     
 
     try {
-      // Comment out the actual API call for now
-      /*
-      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/OptIn/AddContact`, {
+      /* const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/OptIn/AddContact`, {
         phoneNumber: `${formData.countryCode}${formData.phoneNumber}`,
         name: formData.name,
         workOrderId: workOrderId,
-      });
-      */
+      }); */
+      
       
       // Simulate successful submission
       navigate('/text-demo/sms-preview', { 
@@ -140,7 +138,7 @@ const SmsOptIn = ({ workOrderId }) => {
         </form>
         <div className="card text-center mt-4">
           <div className="card-footer text-muted">
-            By checking the box and clicking "Submit," you agree to receive occasional text messages from Tom Built This at the number provided. These messages may include short surveys or demo-related alerts. Message frequency will be limited. Standard message and data rates may apply. Reply STOP at any time to opt out
+          Tom Built This text message surveys. Message and data rates may apply. Message frequency varies. Text HELP for help. Text STOP to opt-out.  View our <Link to="/legal/terms-and-conditions" className="text-primary">Terms & Conditions</Link> and <Link to="/legal/privacy-policy" className="text-primary">Privacy Policy</Link>.
           </div>
         </div>
       </div>
