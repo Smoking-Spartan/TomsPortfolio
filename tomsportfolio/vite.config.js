@@ -8,7 +8,6 @@ export default defineConfig(({ mode }) => {
     console.log(env.VITE_API_URL);
     return {
         plugins: [plugin()],
-        base: mode === 'production' ? '/TomsPortfolio/' : '/TomsPortfolio-QA/',
         server: {
             port: 11534,
             strictPort: true
