@@ -81,7 +81,7 @@ export default function TextPreview() {
         {/* Header */}
         <div className="header-content">
           <img 
-            src={`${import.meta.env.BASE_URL}/media/TBT_Logo.png`} 
+            src={`./media/TBT_Logo.png`} 
             alt="Contact" 
             className="header-logo"
           />
