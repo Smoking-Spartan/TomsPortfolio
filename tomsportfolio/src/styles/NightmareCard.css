@@ -1,0 +1,13 @@
+.nightmare-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.nightmare-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.nightmare-collapse {
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}

@@ -1,9 +1,7 @@
-import Layout from '../components/Layout';
-export default function TextDemo() {
-    
-    return (
-        <Layout>
-            <h1>Text Demo</h1>
-        </Layout>
-    )
-}
+import { Navigate } from 'react-router-dom';
+
+const TextDemo = () => {
+  return <Navigate to="/text-demo/opt-in" replace />;
+};
+
+export default TextDemo;
