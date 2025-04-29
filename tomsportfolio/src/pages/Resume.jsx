@@ -2,7 +2,7 @@
 export default function Resume() {
     return (
         <MainLayout>
-            <h1>Toms Resume</h1>
+            <h1 className="headerSpacing">Toms Resume</h1>
             <p className="text-center max-w-xl mx-auto text-gray-600 mb-6">
                 Here’s a quick look at my resume. You can preview it below or download a copy for later.
             </p>
