@@ -74,14 +74,14 @@
         ]
       },
       {
-        "id": "websurvey-limbo",
-        "title": "🌀 WebSurvey: The Four-Year Spiral",
+        "id": "digital-survey-limbo",
+        "title": "🌀 Digital Survey: The Four-Year Spiral",
         "summary": "A nearly complete project stuck in limbo due to shifting priorities and no ownership.",
         "solution": "Merged critical branches, resolved edge case bugs, documented final deployment steps — but management never gave the go-ahead.",
         "content": [
           "Started in 2020. Still not live.",
-          "Despite being 95% done, WebSurvey kept getting deprioritized every time someone sneezed.",
-          "I fixed bugs, handled merges, and even built modular client based 'WebPlugins' that would isolation the unique client logic from the core WebSurvey codebase. Every time we were close, new ankle-biters popped up.",
+          "Despite being 95% done, Digital Survey kept getting deprioritized every time someone sneezed.",
+          "I fixed bugs, handled merges, and even built modular client based 'WebPlugins' that would isolation the unique client logic from the core Digital Survey codebase. Every time we were close, new ankle-biters popped up.",
           "Eventually, I stopped pushing. Why finish a race when leadership won't let you cross the finish line?"
         ]
       },
@@ -117,7 +117,7 @@
         "summary": "Boss asked for test scripts... after years of zero guidance or test planning.",
         "solution": "Explained that testing needs direction, edge cases, and real use cases, not a vague request thrown over the fence.",
         "content": [
-          "Boss: 'Can you write tests for WebSurvey?'",
+          "Boss: 'Can you write tests for Digital Survey?'",
           "Me: 'What do you want tested?'",
           "Boss: 'You know… the usual. Just make it work.'",
           "After years of no QA investment, no testing standards, and no documentation, he wanted me to magically know what to test and how. Classic."
