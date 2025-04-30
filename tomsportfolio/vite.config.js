@@ -7,11 +7,6 @@ export default defineConfig(({ command, mode }) => {
     // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
     const env = loadEnv(mode, process.cwd(), '');
 
-    console.log('Building with env:', {
-        mode,
-        VITE_API_URL_HTTP: env.VITE_API_URL_HTTP || 'not set'
-    });
-
     return {
         plugins: [plugin()],
         server: {
