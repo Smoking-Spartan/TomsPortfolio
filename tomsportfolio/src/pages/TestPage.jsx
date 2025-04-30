@@ -8,9 +8,17 @@ const TestPage = () => {
         sampleData: { status: 'pending', message: '' }
     });
 
+    useEffect(() => {
+        // Log the environment variable when component mounts
+        // Test comment
+        console.log('API URL:', import.meta.env.VITE_API_URL_HTTP);
+    }, []);
+
     const testApiConnection = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/test/health`);
+            const apiUrl = `${import.meta.env.VITE_API_URL_HTTP}/test/health`;
+            console.log('Attempting to connect to:', apiUrl);
+            const response = await axios.get(apiUrl);
             setResults(prev => ({
                 ...prev,
                 apiConnection: {
