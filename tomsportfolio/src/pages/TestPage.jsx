@@ -9,15 +9,18 @@ const TestPage = () => {
     });
 
     useEffect(() => {
-        // Log the environment variable when component mounts
-        // Test comment
+        // Log all VITE environment variables
+        console.log('All Vite env vars:', import.meta.env);
         console.log('API URL:', import.meta.env.VITE_API_URL_HTTP);
+        console.log('Mode:', import.meta.env.MODE);
+        console.log('Base URL:', import.meta.env.BASE_URL);
     }, []);
 
     const testApiConnection = async () => {
         try {
-            const apiUrl = `${import.meta.env.VITE_API_URL_HTTP}/test/health`;
-            console.log('Attempting to connect to:', apiUrl);
+            const apiUrl = `${import.meta.env.VITE_API_URL_HTTP}/api/test/health`;
+            console.log('Full API URL:', apiUrl);
+            console.log('Environment:', import.meta.env.MODE);
             const response = await axios.get(apiUrl);
             setResults(prev => ({
                 ...prev,
@@ -27,6 +30,7 @@ const TestPage = () => {
                 }
             }));
         } catch (error) {
+            console.error('API call error:', error);
             setResults(prev => ({
                 ...prev,
                 apiConnection: {
