@@ -11,6 +11,6 @@
 
         public int SurveyId { get; set; }
         public SurveyTemplate? Survey { get; set; }
-        public string ContactId { get; set; }
+        public int ContactId { get; set; }
     }
 }

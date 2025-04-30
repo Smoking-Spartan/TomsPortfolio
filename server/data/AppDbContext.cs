@@ -18,6 +18,29 @@ namespace server.data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure relationships
+            modelBuilder.Entity<Answer>()
+                .HasOne<Question>()
+                .WithMany()
+                .HasForeignKey(a => a.QuestionId)
+                .IsRequired();
+
+            modelBuilder.Entity<Answer>()
+                .HasOne<SurveyTemplate>()
+                .WithMany()
+                .HasForeignKey(a => a.SurveyId)
+                .IsRequired();
+
+            // Create a demo contact
+            modelBuilder.Entity<Contact>().HasData(
+                new Contact { Id = 1, Name = "Demo User", PhoneNumber = "+1234567890", OptInTime = new DateTime(2025, 1, 1) }
+            );
+
+            // Create a demo survey template
+            modelBuilder.Entity<SurveyTemplate>().HasData(
+                new SurveyTemplate { Id = 1, ContactId = 1, CreatedAt = new DateTime(2025, 1, 1) }
+            );
+
             // Seed demo survey questions
             modelBuilder.Entity<Question>().HasData(
                 new Question
@@ -60,13 +83,19 @@ namespace server.data
 
             // Seed possible answers for multiple choice question
             modelBuilder.Entity<Answer>().HasData(
-                new Answer { Id = 1, QuestionId = 3, Response = "The Text Messages" },
-                new Answer { Id = 2, QuestionId = 3, Response = "The iMessage like preview" },
-                new Answer { Id = 3, QuestionId = 3, Response = "The Slack Opt-in Page" },
-                new Answer { Id = 4, QuestionId = 3, Response = "Ease of Use" },
-                new Answer { Id = 5, QuestionId = 3, Response = "The Survey itself" },
-                new Answer { Id = 6, QuestionId = 3, Response = "N/A" }
+                new { Id = 1, QuestionId = 3, Response = "The Text Messages", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) },
+                new { Id = 2, QuestionId = 3, Response = "The iMessage like preview", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) },
+                new { Id = 3, QuestionId = 3, Response = "The Slack Opt-in Page", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) },
+                new { Id = 4, QuestionId = 3, Response = "Ease of Use", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) },
+                new { Id = 5, QuestionId = 3, Response = "The Survey itself", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) },
+                new { Id = 6, QuestionId = 3, Response = "N/A", ContactId = 1, SurveyId = 1, SubmittedAt = new DateTime(2025, 1, 1) }
             );
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
         }
     }
 }
