@@ -18,7 +18,7 @@ const TestPage = () => {
 
     const testApiConnection = async () => {
         try {
-            const apiUrl = `${import.meta.env.VITE_API_URL_HTTP}/test/health`;
+            const apiUrl = `${import.meta.env.VITE_API_URL_HTTP}/api/test/health`;
             console.log('Full API URL:', apiUrl);
             console.log('Environment:', import.meta.env.MODE);
             const response = await axios.get(apiUrl);
@@ -43,7 +43,7 @@ const TestPage = () => {
 
     const testDatabaseConnection = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/test/database`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/test/database`);
             setResults(prev => ({
                 ...prev,
                 databaseConnection: {
@@ -64,7 +64,7 @@ const TestPage = () => {
 
     const testSampleData = async () => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/test/sample-data`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/test/sample-data`);
             setResults(prev => ({
                 ...prev,
                 sampleData: {
