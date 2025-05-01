@@ -55,7 +55,7 @@ export default function TextPreview() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/OptIn/SendText`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/OptIn/SendText`, {
         phoneNumber: phoneNumber,
         messageContent: `Hey there ${contactName}! Here is an example text message you would receive from Tom Built This`
       });

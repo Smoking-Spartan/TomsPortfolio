@@ -17,20 +17,6 @@ namespace server.data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure relationships
-            modelBuilder.Entity<Answer>()
-                .HasOne<Question>()
-                .WithMany()
-                .HasForeignKey(a => a.QuestionId)
-                .IsRequired();
-
-            modelBuilder.Entity<Answer>()
-                .HasOne<SurveyTemplate>()
-                .WithMany()
-                .HasForeignKey(a => a.SurveyId)
-                .IsRequired();
-
             // Create a demo contact
             modelBuilder.Entity<Contact>().HasData(
                 new Contact { Id = 1, Name = "Demo User", PhoneNumber = "+1234567890", OptInTime = new DateTime(2025, 1, 1) }
