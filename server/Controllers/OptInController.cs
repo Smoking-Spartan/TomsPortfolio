@@ -230,7 +230,16 @@ namespace server.Controllers
                 return StatusCode(500, "An error occurred while sending the text message");
             }
         }
-
+        /// <summary>
+        /// Test for Postman verifying if the server is reachable
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("ping")]
+        public IActionResult Ping()
+        {
+            return Ok(new { message = "pong", timestamp = DateTime.UtcNow });
+        }
+        
         public class SendTextRequest
         {
             public string PhoneNumber { get; set; } = "";

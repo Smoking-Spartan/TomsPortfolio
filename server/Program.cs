@@ -6,6 +6,7 @@ using Vonage;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
+using TomsPortfolio.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,16 +24,33 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddSerilog(dispose: true);
 });
 
-// Add services to the container.
+// Add database configuration
+string provider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SQLServer";
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (string.Equals(provider, "SQLite", StringComparison.OrdinalIgnoreCase))
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+    
+    options.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+});
 
 // Register CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:11534")
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? 
+            new[] { "http://localhost:11534" };  // Default to localhost if not configured
+
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -68,7 +86,7 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<IMessagingService>(sp => 
     new MessagingService(
         sp.GetRequiredService<VonageClient>(),
-        configuration["VonagePhoneNumber"],
+        configuration["VonagePhoneNumber"] ?? "",
         sp.GetRequiredService<ILogger<MessagingService>>()
     )
 );

@@ -29,7 +29,7 @@ namespace server.Controllers
                 // Create survey response
                 var surveyResponse = new SurveyResponse
                 {
-                    SurveyId = "demo-survey", // Fixed ID for demo survey
+                    SurveyId = 1, // Fixed ID for demo survey
                     ContactId = submission.ContactId,
                     StartedAt = DateTime.UtcNow,
                     CompletedAt = DateTime.UtcNow,
@@ -45,7 +45,7 @@ namespace server.Controllers
                         new Answer
                         {
                             QuestionId = 2,
-                            Response = submission.Recommendation,
+                            Response = submission.Recommendation ?? "",
                             ContactId = submission.ContactId,
                             SubmittedAt = DateTime.UtcNow
                         },
@@ -71,9 +71,9 @@ namespace server.Controllers
 
                 // Generate and send follow-up message
                 var followUpMessage = GenerateFollowUpMessage(submission);
-                if (!string.IsNullOrEmpty(submission.ContactId))
+                if (submission.ContactId != 0)
                 {
-                    var contact = int.Parse(submission.ContactId);
+                    var contact = submission.ContactId;
                     await _messageService.SendMessageAsync(new Message
                     {
                         ContactId = contact,
@@ -137,9 +137,9 @@ namespace server.Controllers
 
     public class DemoSurveySubmission
     {
-        public string ContactId { get; set; }
+        public int ContactId { get; set; }
         public int Rating { get; set; }
-        public string Recommendation { get; set; }
+        public string? Recommendation { get; set; }
         public List<string> Likes { get; set; } = new();
         public SurveyComments Comments { get; set; } = new();
     }

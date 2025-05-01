@@ -19,7 +19,7 @@ namespace server.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<SurveyResponse>> GetSurveyResponsesAsync(string surveyId)
+        public async Task<List<SurveyResponse>> GetSurveyResponsesAsync(int surveyId)
         {
             return await _context.SurveyResponses
                 .Include(sr => sr.Answers)
