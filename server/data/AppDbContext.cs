@@ -9,7 +9,7 @@ namespace server.data
 
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<SurveyTemplate> Surveys { get; set; }
+        public DbSet<SurveyTemplate> SurveyTemplates { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<SurveyResponse> SurveyResponses { get; set; }

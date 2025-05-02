@@ -203,7 +203,7 @@ namespace server.Controllers
                 try
                 {
                     // Send the message
-                    await _messagingService.SendMessageAsync(request.PhoneNumber, request.MessageContent);
+                    await _messagingService.SendMessageAsync(message);
                     message.DeliveredAt = DateTime.UtcNow;
                 }
                 catch (Exception ex)

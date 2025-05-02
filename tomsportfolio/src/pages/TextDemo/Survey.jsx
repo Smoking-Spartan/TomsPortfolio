@@ -46,9 +46,7 @@ const Survey = () => {
     console.log('Survey submitted:', formData);
     
     try{ 
-      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/DemoSurvey/submit`, {
-        formData
-      });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/DemoSurvey/submit`, formData);
     } catch (error) {
       console.error('Error submitting survey:', error);
     }
