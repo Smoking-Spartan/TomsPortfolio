@@ -6,7 +6,6 @@ using Vonage;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
-using TomsPortfolio.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
