@@ -3,6 +3,7 @@ using server.Models;
 using server.Services;
 using Microsoft.EntityFrameworkCore;
 using server.data;
+using Vonage.Common;
 
 namespace server.Controllers
 {
@@ -11,10 +12,10 @@ namespace server.Controllers
     public class DemoSurveyController : ControllerBase
     {
         private readonly ISurveyService _surveyService;
-        private readonly IMessageService _messageService;
+        private readonly IMessagingService _messageService;
         private readonly AppDbContext _context;
 
-        public DemoSurveyController(ISurveyService surveyService, IMessageService messageService, AppDbContext context)
+        public DemoSurveyController(ISurveyService surveyService, IMessagingService messageService, AppDbContext context)
         {
             _surveyService = surveyService;
             _messageService = messageService;
@@ -74,7 +75,7 @@ namespace server.Controllers
                 if (submission.ContactId != 0)
                 {
                     var contact = submission.ContactId;
-                    await _messageService.SendMessageAsync(new Message
+                    await _messageService.SendMessageAsync(new server.Models.Message
                     {
                         ContactId = contact,
                         Content = followUpMessage,

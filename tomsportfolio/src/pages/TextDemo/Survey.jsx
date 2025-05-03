@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import './Survey.css';
 
 const Survey = () => {
@@ -40,10 +41,15 @@ const Survey = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Survey submitted:', formData);
-    // Add your submission logic here
+    
+    try{ 
+      const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/DemoSurvey/submit`, formData);
+    } catch (error) {
+      console.error('Error submitting survey:', error);
+    }
   };
 
   return (

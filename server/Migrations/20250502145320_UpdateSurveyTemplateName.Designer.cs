@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.data;
 
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502145320_UpdateSurveyTemplateName")]
+    partial class UpdateSurveyTemplateName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace server.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            LastActiveTime = new DateTime(2025, 5, 3, 15, 7, 19, 686, DateTimeKind.Utc).AddTicks(7950),
+                            LastActiveTime = new DateTime(2025, 5, 2, 14, 53, 20, 30, DateTimeKind.Utc).AddTicks(4940),
                             Name = "Demo User",
                             OptInTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OptOutTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -216,9 +219,6 @@ namespace server.Migrations
                     b.Property<int>("QuestionNumber")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SurveyTemplateId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -227,8 +227,6 @@ namespace server.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SurveyTemplateId");
 
                     b.ToTable("Questions");
 
@@ -304,15 +302,14 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ContactId")
+                    b.Property<int>("ContactId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SurveyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -324,8 +321,9 @@ namespace server.Migrations
                         new
                         {
                             Id = 1,
+                            ContactId = 1,
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SurveyName = "TextDemo"
+                            StartedAt = new DateTime(2025, 5, 2, 14, 53, 20, 31, DateTimeKind.Utc).AddTicks(1750)
                         });
                 });
 
@@ -361,18 +359,15 @@ namespace server.Migrations
                     b.Navigation("Contact");
                 });
 
-            modelBuilder.Entity("server.Models.Question", b =>
-                {
-                    b.HasOne("server.Models.SurveyTemplate", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("SurveyTemplateId");
-                });
-
             modelBuilder.Entity("server.Models.SurveyTemplate", b =>
                 {
-                    b.HasOne("server.Models.Contact", null)
+                    b.HasOne("server.Models.Contact", "Contact")
                         .WithMany("Surveys")
-                        .HasForeignKey("ContactId");
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
                 });
 
             modelBuilder.Entity("server.Models.Contact", b =>
@@ -395,8 +390,6 @@ namespace server.Migrations
             modelBuilder.Entity("server.Models.SurveyTemplate", b =>
                 {
                     b.Navigation("Answers");
-
-                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,7 +9,7 @@ namespace server.data
 
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<SurveyTemplate> Surveys { get; set; }
+        public DbSet<SurveyTemplate> SurveyTemplates { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<SurveyResponse> SurveyResponses { get; set; }
@@ -24,7 +24,7 @@ namespace server.data
 
             // Create a demo survey template
             modelBuilder.Entity<SurveyTemplate>().HasData(
-                new SurveyTemplate { Id = 1, ContactId = 1, CreatedAt = new DateTime(2025, 1, 1) }
+                new SurveyTemplate { Id = 1, SurveyName = "TextDemo", CreatedAt = new DateTime(2025, 1, 1) }
             );
 
             // Seed demo survey questions

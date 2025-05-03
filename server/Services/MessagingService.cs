@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Vonage;
 using Vonage.Messaging;
 using Microsoft.Extensions.Logging;
+using server.Models;
+using Vonage.Common;
 
 namespace server.Services
 {
@@ -24,14 +26,14 @@ namespace server.Services
             _logger = logger;
         }
 
-        public async Task SendMessageAsync(string phoneNumber, string messageContent)
+        public async Task SendMessageAsync(Models.Message message)
         {
             try
             {
                 _logger.LogDebug($"=== Starting Message Send ===");
                 _logger.LogDebug($"Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
-                _logger.LogDebug($"Recipient: {phoneNumber}");
-                _logger.LogDebug($"Content: {messageContent}");
+                _logger.LogDebug($"Recipient: {message.PhoneNumber}");
+                _logger.LogDebug($"Content: {message.Content}");
 
                 // Ensure sender number is in E.164 format
                 var fromNumber = _fromNumber;
@@ -44,9 +46,9 @@ namespace server.Services
 
                 var request = new SendSmsRequest
                 {
-                    To = phoneNumber,
+                    To = message.PhoneNumber,
                     From = fromNumber,
-                    Text = messageContent,
+                    Text = message.Content,
                     Type = SmsType.Text,
                     StatusReportReq = true,
                     // Add 10DLC specific parameters
@@ -76,14 +78,14 @@ namespace server.Services
                     throw new Exception(errorMessage);
                 }
 
-                _logger.LogInformation($"Message sent successfully to {phoneNumber}. " +
+                _logger.LogInformation($"Message sent successfully to {message.PhoneNumber}. " +
                                      $"MessageId: {response.Messages[0].MessageId}, " +
                                      $"Network: {response.Messages[0].Network}, " +
                                      $"RemainingBalance: {response.Messages[0].RemainingBalance}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error sending message to {phoneNumber}. Stack trace: {ex.StackTrace}");
+                _logger.LogError(ex, $"Error sending message to {message.PhoneNumber}. Stack trace: {ex.StackTrace}");
                 if (ex.InnerException != null)
                 {
                     _logger.LogError($"Inner exception: {ex.InnerException.Message}");

@@ -6,7 +6,6 @@ using Vonage;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
-using TomsPortfolio.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +23,6 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddSerilog(dispose: true);
 });
 
-// Add database configuration
-string provider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SQLServer";
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -56,16 +53,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient<IMessagingService, MessagingService>();
 
+// Register SurveyService
+builder.Services.AddScoped<ISurveyService, SurveyService>();
+
 // Load configuration
 var configuration = builder.Configuration;
 
-// Create credentials
-var credentials = Credentials.FromApiKeyAndSecret(
-    configuration["ApiKey"],
-    configuration["ApiSecret"]
-);
-
-builder.Services.AddSingleton(sp =>
+// Register Vonage client as singleton
+builder.Services.AddSingleton<VonageClient>(sp => 
 {
     var credentials = Credentials.FromApiKeyAndSecret(
         configuration["ApiKey"],
@@ -74,7 +69,7 @@ builder.Services.AddSingleton(sp =>
     return new VonageClient(credentials);
 });
 
-// Register MessagingService with the phone number from configuration
+// Register MessagingService as scoped
 builder.Services.AddScoped<IMessagingService>(sp => 
     new MessagingService(
         sp.GetRequiredService<VonageClient>(),
