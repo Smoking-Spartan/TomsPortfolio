@@ -13,7 +13,7 @@ namespace server.data
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<SurveyResponse> SurveyResponses { get; set; }
-
+        public DbSet<MessageType> MessageTypes {get; set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

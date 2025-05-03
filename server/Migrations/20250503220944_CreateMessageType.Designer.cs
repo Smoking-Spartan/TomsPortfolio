@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.data;
 
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250503220944_CreateMessageType")]
+    partial class CreateMessageType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace server.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            LastActiveTime = new DateTime(2025, 5, 3, 22, 23, 30, 743, DateTimeKind.Utc).AddTicks(2310),
+                            LastActiveTime = new DateTime(2025, 5, 3, 22, 9, 44, 128, DateTimeKind.Utc).AddTicks(1810),
                             Name = "Demo User",
                             OptInTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OptOutTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -182,9 +185,6 @@ namespace server.Migrations
                     b.Property<string>("ErrorMessage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MessageTypeID")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -201,8 +201,6 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContactId");
-
-                    b.HasIndex("MessageTypeID");
 
                     b.ToTable("Messages");
                 });
@@ -389,13 +387,7 @@ namespace server.Migrations
                         .WithMany("Messages")
                         .HasForeignKey("ContactId");
 
-                    b.HasOne("server.Models.MessageType", "MessageType")
-                        .WithMany()
-                        .HasForeignKey("MessageTypeID");
-
                     b.Navigation("Contact");
-
-                    b.Navigation("MessageType");
                 });
 
             modelBuilder.Entity("server.Models.Question", b =>

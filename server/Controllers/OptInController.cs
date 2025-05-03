@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using server.data;
 using server.Models;
 using server.Services;
+using server.Helpers;
 
 namespace server.Controllers
 {
@@ -41,18 +42,10 @@ namespace server.Controllers
 
                 // Trim both name and phone number
                 contact.Name = contact.Name?.Trim();
-                contact.PhoneNumber = contact.PhoneNumber?.Trim();
-
-                // Ensure phone number has + prefix
-                if (!contact.PhoneNumber.StartsWith("+"))
+                contact.PhoneNumber = PhoneNumberHelper.Normalize(contact.PhoneNumber);
+                if (!PhoneNumberHelper.IsValid(contact.PhoneNumber) || string.IsNullOrWhiteSpace(contact.Name))
                 {
-                    contact.PhoneNumber = "+" + contact.PhoneNumber;
-                }
-
-                // Validate phone number format
-                if (!System.Text.RegularExpressions.Regex.IsMatch(contact.PhoneNumber, @"^\+[1-9]\d{1,14}$"))
-                {
-                    return BadRequest("Invalid phone number format. Must be in E.164 format (e.g., +12025551234)");
+                    return BadRequest("Invalid phone number format. Must be in E.164 format (e.g., +12025551234) or a name must be provided");
                 }
 
                 // Check for existing contact with this phone number
@@ -108,37 +101,6 @@ namespace server.Controllers
         }
 
         /// <summary>
-        /// Removes a contact by ID.
-        /// </summary>
-        /// <param name="id">The ID of the contact to remove.</param>
-        /// <returns>No content if successful.</returns>
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> RemoveContact(int id)
-        {
-            try
-            {
-                var contact = await _context.Contacts.FindAsync(id);
-                if (contact == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Contacts.Remove(contact);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error removing contact");
-                return StatusCode(500, "An error occurred while removing the contact");
-            }
-        }
-
-        /// <summary>
         /// Sends a text message to a contact
         /// </summary>
         /// <param name="phoneNumber">The phone number to send to</param>
@@ -151,53 +113,27 @@ namespace server.Controllers
         public async Task<IActionResult> SendText([FromBody] SendTextRequest request)
         {
             try
-            {
-                // Basic validation
-                if (string.IsNullOrEmpty(request.PhoneNumber) || string.IsNullOrEmpty(request.MessageContent))
-                {
-                    return BadRequest("Phone number and message content are required");
-                }
-
-                // Ensure phone number has + prefix
-                if (!request.PhoneNumber.StartsWith("+"))
-                {
-                    request.PhoneNumber = "+" + request.PhoneNumber;
-                }
-
-                // Validate phone number format
-                if (!System.Text.RegularExpressions.Regex.IsMatch(request.PhoneNumber, @"^\+[1-9]\d{1,14}$"))
-                {
-                    return BadRequest("Invalid phone number format. Must be in E.164 format (e.g., +12025551234)");
-                }
-
-                
-                // Check if this phone number has opted in
-                var contact = await _context.Contacts
-                    .FirstOrDefaultAsync(c => c.PhoneNumber == request.PhoneNumber && c.IsActive);
-                
-                if (contact == null)
+            {   
+                // Check if this phone number has opted in                
+                if (await _messagingService.IsContactOptedIn(request.PhoneNumber) == false)
                 {
                     return BadRequest("This phone number has not opted in to receive messages");
                 }
 
-                // Check if we've sent too many messages recently
-                var recentMessages = await _context.Messages
-                    .Where(m => m.PhoneNumber == request.PhoneNumber && 
-                               m.SentAt > DateTime.UtcNow.AddHours(-1))
-                    .CountAsync();
-
-                if (recentMessages >= 3)
+                //Make sure the person is not trying to spam.
+                if (await _messagingService.MessageSendPreCheck(request.PhoneNumber) >= 3)
                 {
                     return BadRequest("Too many messages sent recently. Please try again later.");
                 }
-
+                
+                var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.PhoneNumber == "+" + request.PhoneNumber);
                 // Create message record
                 var message = new Message
                 {
                     PhoneNumber = request.PhoneNumber,
                     Content = request.MessageContent,
                     SentAt = DateTime.UtcNow,
-                    ContactId = contact.Id
+                    ContactId = contact?.Id
                 };
 
                 try
@@ -212,10 +148,6 @@ namespace server.Controllers
                     message.ErrorMessage = ex.Message;
                     // Don't throw here, we want to save the error message
                 }
-                
-                // Save message record regardless of success/failure
-                await _context.Messages.AddAsync(message);
-                await _context.SaveChangesAsync();
 
                 if (!string.IsNullOrEmpty(message.ErrorMessage))
                 {

@@ -8,6 +8,9 @@ using Vonage.Messaging;
 using Microsoft.Extensions.Logging;
 using server.Models;
 using Vonage.Common;
+using server.data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace server.Services
 {
@@ -16,14 +19,40 @@ namespace server.Services
         private readonly VonageClient _VonageClient;
         private readonly string _fromNumber;
         private readonly ILogger<MessagingService> _logger;
+        private readonly AppDbContext _context;
 
-        public MessagingService(VonageClient vonageClient, string fromNumber, ILogger<MessagingService> logger)
+        public MessagingService(VonageClient vonageClient, string fromNumber, ILogger<MessagingService> logger, AppDbContext context)
         {
             Debug.WriteLine($"New SmsService created at {DateTime.Now}");
             Debug.WriteLine($"VonageClient hash: {vonageClient.GetHashCode()}");
             _VonageClient = vonageClient;
             _fromNumber = fromNumber;
             _logger = logger;
+            _context = context;
+        }
+
+        public async Task<int> MessageSendPreCheck(string phoneNumber)
+        {
+            // Check if we've sent too many messages recently
+            int messageCount = await _context.Messages
+                .Where(m => m.PhoneNumber == phoneNumber && 
+                            m.SentAt > DateTime.UtcNow.AddHours(-1))
+                .CountAsync();
+            return messageCount;
+        }
+
+        private async Task SaveMessage(Models.Message message)
+        {
+            var result = await _context.AddAsync(message);
+        }
+
+        public async Task<bool> IsContactOptedIn(string phoneNumber)
+        {
+            var correctedPhoneNumber = "+" + phoneNumber;
+            return await _context.Contacts
+                    .AnyAsync(p => p.PhoneNumber == correctedPhoneNumber 
+                    && p.OptOutTime == DateTime.MinValue
+                    && p.IsActive);
         }
 
         public async Task SendMessageAsync(Models.Message message)
@@ -78,10 +107,14 @@ namespace server.Services
                     throw new Exception(errorMessage);
                 }
 
+                await _context.AddAsync(message);
+                await _context.SaveChangesAsync();
+                
                 _logger.LogInformation($"Message sent successfully to {message.PhoneNumber}. " +
                                      $"MessageId: {response.Messages[0].MessageId}, " +
                                      $"Network: {response.Messages[0].Network}, " +
                                      $"RemainingBalance: {response.Messages[0].RemainingBalance}");
+
             }
             catch (Exception ex)
             {
