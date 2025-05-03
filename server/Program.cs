@@ -63,8 +63,8 @@ var configuration = builder.Configuration;
 builder.Services.AddSingleton<VonageClient>(sp => 
 {
     var credentials = Credentials.FromApiKeyAndSecret(
-        configuration["ApiKey"],
-        configuration["ApiSecret"]
+        configuration["Vonage:ApiKey"],
+        configuration["Vonage:ApiSecret"]
     );
     return new VonageClient(credentials);
 });
@@ -73,8 +73,9 @@ builder.Services.AddSingleton<VonageClient>(sp =>
 builder.Services.AddScoped<IMessagingService>(sp => 
     new MessagingService(
         sp.GetRequiredService<VonageClient>(),
-        configuration["VonagePhoneNumber"] ?? "",
-        sp.GetRequiredService<ILogger<MessagingService>>()
+        configuration["Vonage:VonagePhoneNumber"] ?? "",
+        sp.GetRequiredService<ILogger<MessagingService>>(),
+        sp.GetRequiredService<AppDbContext>()
     )
 );
 

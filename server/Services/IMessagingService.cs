@@ -7,6 +7,8 @@ namespace server.Services
 {
     public interface IMessagingService
     {
+        Task<int> MessageSendPreCheck(string phoneNumber);
         Task SendMessageAsync(Models.Message message);
+        Task<bool> IsContactOptedIn(string phoneNumber);
     }
 }
