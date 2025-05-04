@@ -92,17 +92,26 @@ public class TestController : ControllerBase
         }
     }
 
-    // [HttpPost("api/admin/kill-sms")]
-    // public IActionResult SetKillSwitch([FromBody] KillSwitchRequest request)
-    // {
-    //     var adminPassword = Environment.GetEnvironmentVariable("KillSmsPassword:Password");
-    //     if (request.Password != adminPassword)
-    //         return Unauthorized();
+    [HttpPost("admin/toggle-sms")]
+    public async Task<IActionResult> SetKillSwitch([FromBody] AdminLoginRequest request)
+    {
+        var adminPassword = _configuration["KillSmsPassword:Password"];
+        if (request.Password != adminPassword)
+            return Unauthorized();
 
-    //     // Update kill switch in DB
+        // Update kill switch in DB
+        var status = await _dbContext.SmsStatuses.FirstOrDefaultAsync();
+        if(status == null)
+            return StatusCode(500, new { 
+                status = "error",
+                message = "Missing Sms Status Setting",
+                timestamp = DateTime.UtcNow
+            });
+        status.IsSmsActive = request.SetSmsStatus;
+        await _dbContext.SaveChangesAsync();
 
-    //     return Ok();
-    // }
+        return Ok();
+    }
 
     [HttpPost("admin/login")]
     public async Task<IActionResult> LogInToKillSwitch([FromBody] AdminLoginRequest request){
@@ -144,5 +153,6 @@ public class TestController : ControllerBase
     public class AdminLoginRequest
     {
         public string Password { get; set; }
+        public bool SetSmsStatus {get; set;}
     }
 } 

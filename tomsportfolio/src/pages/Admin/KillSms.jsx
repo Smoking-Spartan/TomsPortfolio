@@ -4,7 +4,7 @@ import axios from 'axios';
 const KillSms = () => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [killSwitch, setKillSwitch] = useState(false);
+  const [isSmsActive, setKillSwitch] = useState(false);
   const [error, setError] = useState('');
 
   // Simulate password check (replace with real API call in production)
@@ -15,8 +15,7 @@ const KillSms = () => {
     var response = await axios.post(url, {password});
     if(response.status == 200){
       setIsAuthenticated(true);
-      var data = response.data;
-      setKillSwitch(data.IsSmsActive);
+      setKillSwitch(response.data.isSmsactive);
       setError('');
     }
     else {
@@ -31,8 +30,8 @@ const KillSms = () => {
   const handleToggle = async () => {
     try {
       // Call your backend API to update the kill switch status
-      await axios.post('${import.meta.env.VITE_API_URL_HTTP}/api/test/kill-sms', { kill: !killSwitch });
-      setKillSwitch(!killSwitch);
+      await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/Test/admin/toggle-sms`, { SetSmsStatus: !isSmsActive, password: password });
+      setKillSwitch(!isSmsActive);
     } catch (err) {
       setError('Failed to update kill switch');
     }
@@ -54,13 +53,15 @@ const KillSms = () => {
         </form>
       ) : (
         <div>
+            <div>
+                <label>Sms Is Currently: {isSmsActive ? 'Active' : 'Disabled'}</label>
+            </div>
           <label>
             <input
-              type="checkbox"
-              checked={killSwitch}
-              onChange={handleToggle}
+              type="button"
+              value={isSmsActive ? 'Disable' : 'Enable'}
+              onClick={handleToggle}
             />
-            Kill SMS Functionality
           </label>
           {error && <div style={{ color: 'red' }}>{error}</div>}
         </div>

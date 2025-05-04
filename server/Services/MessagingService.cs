@@ -59,10 +59,10 @@ namespace server.Services
         {
             try
             {
-                _logger.LogDebug($"=== Starting Message Send ===");
-                _logger.LogDebug($"Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
-                _logger.LogDebug($"Recipient: {message.PhoneNumber}");
-                _logger.LogDebug($"Content: {message.Content}");
+                //Make sure that Sms is currently enabled to send
+                if(await _context.SmsStatuses.AnyAsync(s => s.IsSmsActive == false)){
+                    throw new InvalidOperationException("SMS functionality is currently disabled.");
+                }
 
                 // Ensure sender number is in E.164 format
                 var fromNumber = _fromNumber;
