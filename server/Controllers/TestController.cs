@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using server.data;
+using server.Models;
 
 namespace server.Controllers;
 
@@ -91,6 +92,29 @@ public class TestController : ControllerBase
         }
     }
 
+    // [HttpPost("api/admin/kill-sms")]
+    // public IActionResult SetKillSwitch([FromBody] KillSwitchRequest request)
+    // {
+    //     var adminPassword = Environment.GetEnvironmentVariable("KillSmsPassword:Password");
+    //     if (request.Password != adminPassword)
+    //         return Unauthorized();
+
+    //     // Update kill switch in DB
+
+    //     return Ok();
+    // }
+
+    [HttpPost("admin/login")]
+    public async Task<IActionResult> LogInToKillSwitch([FromBody] AdminLoginRequest request){
+        var adminPassword = _configuration["KillSmsPassword:Password"];
+        if (request.Password != adminPassword)
+            return Unauthorized();
+        
+        var smsStatus = await _dbContext.SmsStatuses.FirstOrDefaultAsync();
+
+        return Ok(new { IsSmsactive = smsStatus?.IsSmsActive ?? false});
+    }
+
     private string MaskConnectionString(string connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
@@ -116,5 +140,9 @@ public class TestController : ControllerBase
         }
 
         return masked;
+    }
+    public class AdminLoginRequest
+    {
+        public string Password { get; set; }
     }
 } 

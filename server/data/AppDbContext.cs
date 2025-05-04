@@ -14,6 +14,8 @@ namespace server.data
         public DbSet<Answer> Answers { get; set; }
         public DbSet<SurveyResponse> SurveyResponses { get; set; }
         public DbSet<MessageType> MessageTypes {get; set;}
+        public DbSet<SmsOptInAudit> SmsOptInAudits {get; set;}
+        public DbSet<SmsStatus> SmsStatuses {get; set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
