@@ -1,5 +1,6 @@
 .survey-container {
-  max-width: 800px;
+  width: 90%;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #ffffff;
@@ -177,7 +178,7 @@ textarea.large-textarea {
 
 @media (max-width: 768px) {
   .survey-container {
-    padding: 1rem;
+    padding: 0;
   }
 
   .rating-container {
@@ -193,9 +194,16 @@ textarea.large-textarea {
     flex-direction: column;
   }
 
+  .container{
+    padding: 0 !important;
+  }
   .recommendation-button {
     width: 100%;
   }
+    /* This targets the root only when .kill-sms-page is a child */
+    #root.no-padding {
+      padding: 0 !important;
+    }
 } 
 
 .send-btn {
