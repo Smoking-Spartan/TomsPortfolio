@@ -13,7 +13,16 @@ export default function TextPreview() {
   const [showAlert, setShowAlert] = useState(justOptedIn);
   const [isVisible, setIsVisible] = useState(justOptedIn);
   const [isSmsActive, setIsSmsActive] = useState(false);
+  const [smsStatusLoading, setSmsStatusLoading] = useState(true);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    const root = document.getElementById('root');
+    root.classList.add('no-padding');
+    return () => {
+      root.classList.remove('no-padding');
+    };
+  }, []);
 
   useEffect(() => {
     if (!contactName || !phoneNumber) return;
@@ -43,7 +52,8 @@ export default function TextPreview() {
   
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/sms/status`)
-      .then(res => setIsSmsActive(res.data.isSmsActive));
+      .then(res => setIsSmsActive(res.data.isSmsActive))
+      .finally(() => setSmsStatusLoading(false));
   }, []);
 
   useEffect(() => {
@@ -91,7 +101,11 @@ export default function TextPreview() {
           Successfully opted in! You should receive a confirmation message shortly.
         </div>
       )}
-      {!isSmsActive && <div className='alert alert-danger'>SMS is currently disabled. Contact Tom to enable it.</div>}
+      {!smsStatusLoading && !isSmsActive && (
+        <div className='alert alert-danger'>
+          SMS is currently disabled. Contact Tom to enable it.
+        </div>
+      )}
       <div className="text-message-container bg-white rounded-xl p-4 shadow-md max-w-md mx-auto">
         {/* Header */}
         <div className="header-content">

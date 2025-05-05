@@ -201,9 +201,9 @@ textarea.large-textarea {
     width: 100%;
   }
     /* This targets the root only when .kill-sms-page is a child */
-  #root {
-    padding: 0 !important;
-  }
+    #root.no-padding {
+      padding: 0 !important;
+    }
 } 
 
 .send-btn {
@@ -225,9 +225,4 @@ textarea.large-textarea {
 
 .send-btn:disabled {
   cursor: not-allowed;
-}
-
-/* This targets the root only when .kill-sms-page is a child */
-#root .sms-preview-page {
-  padding: 0 !important;
 }
