@@ -11,7 +11,7 @@ export default function TextPreview() {
   const [sent, setSent] = useState(false);
   const [showAlert, setShowAlert] = useState(justOptedIn);
   const [isVisible, setIsVisible] = useState(justOptedIn);
-
+  const [isSmsActive, setIsSmsActive] = useState(false);
   useEffect(() => {
     if (!contactName || !phoneNumber) return;
 
@@ -37,6 +37,11 @@ export default function TextPreview() {
       };
     }
   }, [justOptedIn]);
+  
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/sms/status`)
+      .then(res => setIsSmsActive(res.data.isSmsActive));
+  }, []);
 
   const sendText = async () => {
     // Double check the phone number and contact name are still valid
@@ -57,7 +62,7 @@ export default function TextPreview() {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL_HTTP}/api/OptIn/SendText`, {
         phoneNumber: phoneNumber,
-        messageContent: `Hey there ${contactName}! Here is an example text message you would receive from Tom Built This`
+        messageContent: `Hey there ${contactName}! Here is an example text message you would receive from Tom Built It`
       });
       
       setSent(true);
@@ -77,6 +82,7 @@ export default function TextPreview() {
           Successfully opted in! You should receive a confirmation message shortly.
         </div>
       )}
+      {!isSmsActive && <div className='alert alert-danger'>SMS is currently disabled. Contact Tom to enable it.</div>}
       <div className="text-message-container bg-white rounded-xl p-4 shadow-md max-w-md mx-auto">
         {/* Header */}
         <div className="header-content">
@@ -147,10 +153,9 @@ export default function TextPreview() {
             <span className="message-text">Tom Built This: {contactName}, you’ve subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.</span>
           </div>
           <button
-            style={{ backgroundColor: '#007AFF' }}
-            className="send-button"
+            className={`send-btn${isSmsActive ? ' active' : ''}`}
             onClick={sendText}
-            disabled={true}
+            disabled={!isSmsActive}
           >
             Send
           </button>
