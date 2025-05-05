@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {BaseLayout} from '../../components/Layout';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import './Survey.css';
 
 export default function TextPreview() {
   const location = useLocation();
@@ -12,6 +13,8 @@ export default function TextPreview() {
   const [showAlert, setShowAlert] = useState(justOptedIn);
   const [isVisible, setIsVisible] = useState(justOptedIn);
   const [isSmsActive, setIsSmsActive] = useState(false);
+  const bottomRef = useRef(null);
+
   useEffect(() => {
     if (!contactName || !phoneNumber) return;
 
@@ -29,12 +32,12 @@ export default function TextPreview() {
       // Start fade out after 1.5 seconds
       const fadeTimer = setTimeout(() => {
         setIsVisible(false);
+        // Remove from DOM after fade-out (e.g., 500ms for fade animation)
+        const removeTimer = setTimeout(() => setShowAlert(false), 500); // 500ms = fade duration
+        return () => clearTimeout(removeTimer);
       }, 1500);
 
-      // Cleanup timers if component unmounts
-      return () => {
-        clearTimeout(fadeTimer);
-      };
+      return () => clearTimeout(fadeTimer);
     }
   }, [justOptedIn]);
   
@@ -42,6 +45,12 @@ export default function TextPreview() {
     axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/sms/status`)
       .then(res => setIsSmsActive(res.data.isSmsActive));
   }, []);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [step, sent]);
 
   const sendText = async () => {
     // Double check the phone number and contact name are still valid
@@ -75,7 +84,7 @@ export default function TextPreview() {
 
   return (
     <BaseLayout>
-    <div className="relative pt-16"> 
+    <div className="relative pt-16 sms-preview-page"> 
       {showAlert && (
         <div className={`alert alert-success alert-fade ${isVisible ? 'show' : 'hide'}  absolute top-4 left-0 right-0 z-10`}
         role="alert">
@@ -138,7 +147,7 @@ export default function TextPreview() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              Tom Built This: {contactName}, you’ve subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.
+              Tom Built This: {contactName}, you've subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.
             </motion.div>
           )}
         </AnimatePresence>
@@ -150,7 +159,7 @@ export default function TextPreview() {
         <div className="ios-message-bar">
           <div className="ios-message-input">
 
-            <span className="message-text">Tom Built This: {contactName}, you’ve subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.</span>
+            <span className="message-text">Tom Built This: {contactName}, you've subscribed to our SMS demo. Msg & data rates may apply. Reply HELP for help, STOP to cancel.</span>
           </div>
           <button
             className={`send-btn${isSmsActive ? ' active' : ''}`}
@@ -178,6 +187,7 @@ export default function TextPreview() {
           )}
         </AnimatePresence>
       </div>
+      <div ref={bottomRef} />
       </div>
     </BaseLayout>
   );
