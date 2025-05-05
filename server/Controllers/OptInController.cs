@@ -51,13 +51,18 @@ namespace server.Controllers
                 // Check for existing contact with this phone number
                 var existingContact = await _context.Contacts
                     .FirstOrDefaultAsync(c => c.PhoneNumber == contact.PhoneNumber);
-
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+                
                 if (existingContact == null)
                 {
                     // New contact
                     contact.OptInTime = DateTime.UtcNow;
                     contact.LastActiveTime = DateTime.UtcNow;
                     await _context.Contacts.AddAsync(contact);
+                    await _context.SaveChangesAsync();
+                    
+                    await _context.SmsOptInAudits.AddAsync(CreateSmsOptInAudit(contact, ipAddress ?? "", userAgent ?? ""));
                     await _context.SaveChangesAsync();
                     return CreatedAtAction(nameof(AddContact), new { id = contact.Id }, contact);
                 }
@@ -68,6 +73,7 @@ namespace server.Controllers
                     existingContact.IsActive = true;
                     existingContact.LastActiveTime = DateTime.UtcNow;
                     existingContact.OptOutTime = DateTime.MinValue; // Reset opt-out if they were opted out
+                    await _context.SmsOptInAudits.AddAsync(CreateSmsOptInAudit(existingContact, ipAddress ?? "", userAgent ?? ""));
                     await _context.SaveChangesAsync();
                     return Ok(existingContact);
                 }
@@ -78,7 +84,18 @@ namespace server.Controllers
                 return StatusCode(500, "An error occurred while adding the contact");
             }
         }
-
+        private SmsOptInAudit CreateSmsOptInAudit(Contact contact, string ipAddress, string userAgent)
+        {
+            return new SmsOptInAudit
+            {
+                PhoneNumber = contact.PhoneNumber,
+                ContactId = contact.Id,
+                OptinTime = DateTime.UtcNow,
+                IPAddress = ipAddress,
+                UserAgent = userAgent,
+                WasSuccessful = true
+            };
+        }
         /// <summary>
         /// Retrieves all opted-in contacts.
         /// </summary>

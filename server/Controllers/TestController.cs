@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using server.data;
+using server.Models;
 
 namespace server.Controllers;
 
@@ -91,6 +92,38 @@ public class TestController : ControllerBase
         }
     }
 
+    [HttpPost("admin/toggle-sms")]
+    public async Task<IActionResult> SetKillSwitch([FromBody] AdminLoginRequest request)
+    {
+        var adminPassword = _configuration["KillSmsPassword:Password"];
+        if (request.Password != adminPassword)
+            return Unauthorized();
+
+        // Update kill switch in DB
+        var status = await _dbContext.SmsStatuses.FirstOrDefaultAsync();
+        if(status == null)
+            return StatusCode(500, new { 
+                status = "error",
+                message = "Missing Sms Status Setting",
+                timestamp = DateTime.UtcNow
+            });
+        status.IsSmsActive = request.SetSmsStatus;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost("admin/login")]
+    public async Task<IActionResult> LogInToKillSwitch([FromBody] AdminLoginRequest request){
+        var adminPassword = _configuration["KillSmsPassword:Password"];
+        if (request.Password != adminPassword)
+            return Unauthorized();
+        
+        var smsStatus = await _dbContext.SmsStatuses.FirstOrDefaultAsync();
+
+        return Ok(new { IsSmsactive = smsStatus?.IsSmsActive ?? false});
+    }
+
     private string MaskConnectionString(string connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
@@ -116,5 +149,10 @@ public class TestController : ControllerBase
         }
 
         return masked;
+    }
+    public class AdminLoginRequest
+    {
+        public string Password { get; set; }
+        public bool SetSmsStatus {get; set;}
     }
 } 

@@ -197,3 +197,24 @@ textarea.large-textarea {
     width: 100%;
   }
 } 
+
+.send-btn {
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 1em 2em;
+  font-size: 1.2em;
+  transition: background 0.2s, opacity 0.2s;
+  cursor: pointer;
+  background: #bbdefb; /* default: light blue */
+  opacity: 0.6;
+}
+
+.send-btn.active {
+  background: #007AFF; /* bright blue */
+  opacity: 1;
+}
+
+.send-btn:disabled {
+  cursor: not-allowed;
+}
