@@ -1,16 +1,8 @@
 using System.Diagnostics;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Vonage;
 using Vonage.Messaging;
-using Microsoft.Extensions.Logging;
-using server.Models;
-using Vonage.Common;
 using server.data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace server.Services
 {
@@ -106,6 +98,8 @@ namespace server.Services
                     _logger.LogError(errorMessage);
                     throw new Exception(errorMessage);
                 }
+                //Add the Vonage Message ID to the message record
+                message.VonageMessageID = response.Messages[0].MessageId;
 
                 await _context.AddAsync(message);
                 await _context.SaveChangesAsync();

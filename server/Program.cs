@@ -6,6 +6,7 @@ using Vonage;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Extensions.Logging;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString);
     options.ConfigureWarnings(warnings => warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
 });
+
 
 // Register CORS policy
 builder.Services.AddCors(options =>
@@ -99,6 +101,19 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
                        Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+});
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(exceptionHandlerPathFeature?.Error, "Unhandled exception occurred");
+
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsync("Internal Server Error");
+    });
 });
 
 app.UseRouting();
