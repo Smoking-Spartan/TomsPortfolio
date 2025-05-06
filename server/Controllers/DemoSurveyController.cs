@@ -30,7 +30,7 @@ namespace server.Controllers
                 // Create survey response
                 var surveyResponse = new SurveyResponse
                 {
-                    SurveyId = 1, // Fixed ID for demo survey
+                    SurveyTemplateId = 1, // Fixed ID for demo survey
                     ContactId = submission.ContactId,
                     StartedAt = DateTime.UtcNow,
                     CompletedAt = DateTime.UtcNow,

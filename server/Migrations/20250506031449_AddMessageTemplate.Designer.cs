@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.data;
 
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250506031449_AddMessageTemplate")]
+    partial class AddMessageTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace server.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            LastActiveTime = new DateTime(2025, 5, 6, 3, 18, 32, 13, DateTimeKind.Utc).AddTicks(2450),
+                            LastActiveTime = new DateTime(2025, 5, 6, 3, 14, 48, 577, DateTimeKind.Utc).AddTicks(270),
                             Name = "Demo User",
                             OptInTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OptOutTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -205,33 +208,6 @@ namespace server.Migrations
                     b.HasIndex("MessageTypeID");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("server.Models.MessageTemplate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("MessageTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TemplateText")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageTypeId");
-
-                    b.ToTable("MessageTemplates");
                 });
 
             modelBuilder.Entity("server.Models.MessageType", b =>
@@ -476,17 +452,6 @@ namespace server.Migrations
                         .HasForeignKey("MessageTypeID");
 
                     b.Navigation("Contact");
-
-                    b.Navigation("MessageType");
-                });
-
-            modelBuilder.Entity("server.Models.MessageTemplate", b =>
-                {
-                    b.HasOne("server.Models.MessageType", "MessageType")
-                        .WithMany()
-                        .HasForeignKey("MessageTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("MessageType");
                 });

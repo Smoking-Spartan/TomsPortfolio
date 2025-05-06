@@ -23,7 +23,7 @@ namespace server.Services
         {
             return await _context.SurveyResponses
                 .Include(sr => sr.Answers)
-                .Where(sr => sr.SurveyId == surveyId)
+                .Where(sr => sr.SurveyTemplateId == surveyId)
                 .ToListAsync();
         }
     }
