@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using server.Models.Surveys;
 
 namespace server.Models{
     public class SurveyResponse
@@ -11,7 +12,7 @@ namespace server.Models{
         public SurveyTemplate? SurveyTemplate { get; set; }  // Navigation property
         
         public int ContactId { get; set; }  // Who answered it
-        public List<Answer>? Answers { get; set; }  // Their answers
+        public List<SurveyResponseAnswer>? Answers { get; set; }  // Their answers
         public DateTime StartedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
     }
