@@ -28,6 +28,7 @@ export default function TextPreview() {
     if (!contactName || !phoneNumber) return;
 
     const timers = [
+      setTimeout(() => setStep(0), 2000), // Show typing 
       setTimeout(() => setStep(1), 2000), // Show instruction
       setTimeout(() => setStep(2), 3000), // Show typing
       setTimeout(() => setStep(3), 5000), // Show message
@@ -85,7 +86,8 @@ export default function TextPreview() {
       });
       
       setSent(true);
-      setStep(4);
+      setStep(4); //Show typing indicator
+      setTimeout(() => setStep(5), 1500); //Show message from the phone number
     } catch (error) {
       console.error('Error sending text:', error);
       alert('Failed to send text message. Please try again.');
@@ -116,7 +118,21 @@ export default function TextPreview() {
           />
           <span className="contact-name">Tom Evanko</span>
         </div>
-
+        <AnimatePresence>
+          {(step === 0) && (
+            <motion.div
+              key="typing"
+              className="typing-indicator flex space-x-1 mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* Instruction Bubble */}
         <AnimatePresence>
           {step >= 1 && (
@@ -136,7 +152,7 @@ export default function TextPreview() {
 
         {/* Typing Indicator */}
         <AnimatePresence>
-          {(step === 2 || step === 4) && (
+          {(step === 2) && (
             <motion.div
               key="typing"
               className="typing-indicator flex space-x-1 mb-2"
@@ -185,10 +201,24 @@ export default function TextPreview() {
         </div>
         </div>
         )}
-
+      <AnimatePresence>
+          {(step === 4) && (
+            <motion.div
+              key="typing"
+              className="typing-indicator flex space-x-1 mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+              <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* Final Confirmation Bubble */}
         <AnimatePresence>
-          {step === 4 && (
+          {step === 5 && (
             <motion.div
               key="followup"
               className="text-bubble system-message btn-primary bg-gray-100 text-blue-800 rounded-xl px-4 py-2 mt-4"

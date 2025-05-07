@@ -4,6 +4,7 @@ using server.data;
 using server.Models;
 using server.Services;
 using server.Helpers;
+using Vonage.Messages;
 
 namespace server.Controllers
 {
@@ -150,7 +151,8 @@ namespace server.Controllers
                     PhoneNumber = request.PhoneNumber,
                     Content = request.MessageContent,
                     SentAt = DateTime.UtcNow,
-                    ContactId = contact?.Id
+                    ContactId = contact?.Id,
+                    MessageTypeID = (int)MessageTypeEnum.OptIn
                 };
 
                 try

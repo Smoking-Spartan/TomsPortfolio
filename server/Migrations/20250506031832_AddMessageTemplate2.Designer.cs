@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.data;
 
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250506031832_AddMessageTemplate2")]
+    partial class AddMessageTemplate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("server.Models.AnswerOptionTemplate", b =>
+            modelBuilder.Entity("server.Models.Answer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,29 +33,90 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DisplayOrder")
+                    b.Property<int>("ContactId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SurveyQuestionTemplateId")
+                    b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SurveyTemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
+                    b.Property<string>("Response")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SurveyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SurveyResponseId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SurveyQuestionTemplateId");
+                    b.HasIndex("QuestionId");
 
-                    b.HasIndex("SurveyTemplateId");
+                    b.HasIndex("SurveyId");
 
-                    b.ToTable("AnswerOptionTemplates");
+                    b.HasIndex("SurveyResponseId");
+
+                    b.ToTable("Answers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "The Text Messages",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "The iMessage like preview",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "The Slack Opt-in Page",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "Ease of Use",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "The Survey itself",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ContactId = 1,
+                            QuestionId = 3,
+                            Response = "N/A",
+                            SubmittedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SurveyId = 1
+                        });
                 });
 
             modelBuilder.Entity("server.Models.Contact", b =>
@@ -92,7 +156,7 @@ namespace server.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            LastActiveTime = new DateTime(2025, 5, 7, 2, 2, 48, 354, DateTimeKind.Utc).AddTicks(1340),
+                            LastActiveTime = new DateTime(2025, 5, 6, 3, 18, 32, 13, DateTimeKind.Utc).AddTicks(2450),
                             Name = "Demo User",
                             OptInTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OptOutTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -196,6 +260,78 @@ namespace server.Migrations
                     b.ToTable("MessageTypes");
                 });
 
+            modelBuilder.Entity("server.Models.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderInSurvey")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SurveyTemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SurveyTemplateId");
+
+                    b.ToTable("Questions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsRequired = true,
+                            OrderInSurvey = 1,
+                            QuestionNumber = 1,
+                            Text = "What is your thoughts on the demo so far? (1 being awful and 10 being perfect)",
+                            Type = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsRequired = true,
+                            OrderInSurvey = 2,
+                            QuestionNumber = 2,
+                            Text = "Would you recommend this demo to a friend or family member?",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsRequired = false,
+                            OrderInSurvey = 3,
+                            QuestionNumber = 3,
+                            Text = "What do you like so far about the demo?",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsRequired = false,
+                            OrderInSurvey = 4,
+                            QuestionNumber = 4,
+                            Text = "Any thoughts or suggestions?",
+                            Type = 3
+                        });
+                });
+
             modelBuilder.Entity("server.Models.SmsOptInAudit", b =>
                 {
                     b.Property<int>("Id")
@@ -247,40 +383,6 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SmsStatuses");
-                });
-
-            modelBuilder.Entity("server.Models.SurveyQuestionTemplate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OrderInSurvey")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuestionNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SurveyTemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SurveyTemplateId");
-
-                    b.ToTable("QuestionTemplates");
                 });
 
             modelBuilder.Entity("server.Models.SurveyResponse", b =>
@@ -343,53 +445,27 @@ namespace server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("server.Models.Surveys.SurveyResponseAnswer", b =>
+            modelBuilder.Entity("server.Models.Answer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AnswerOptionTemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AnsweredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FreeTextAnswer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SurveyQuestionTemplateId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SurveyResponseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerOptionTemplateId");
-
-                    b.HasIndex("SurveyQuestionTemplateId");
-
-                    b.HasIndex("SurveyResponseId");
-
-                    b.ToTable("SurveyResponseAnswers");
-                });
-
-            modelBuilder.Entity("server.Models.AnswerOptionTemplate", b =>
-                {
-                    b.HasOne("server.Models.SurveyQuestionTemplate", "SurveyQuestionTemplate")
-                        .WithMany("AnswerOptions")
-                        .HasForeignKey("SurveyQuestionTemplateId")
+                    b.HasOne("server.Models.Question", "Question")
+                        .WithMany("PossibleAnswers")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("server.Models.SurveyTemplate", null)
+                    b.HasOne("server.Models.SurveyTemplate", "Survey")
                         .WithMany("Answers")
-                        .HasForeignKey("SurveyTemplateId");
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("SurveyQuestionTemplate");
+                    b.HasOne("server.Models.SurveyResponse", null)
+                        .WithMany("Answers")
+                        .HasForeignKey("SurveyResponseId");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Survey");
                 });
 
             modelBuilder.Entity("server.Models.Message", b =>
@@ -418,15 +494,11 @@ namespace server.Migrations
                     b.Navigation("MessageType");
                 });
 
-            modelBuilder.Entity("server.Models.SurveyQuestionTemplate", b =>
+            modelBuilder.Entity("server.Models.Question", b =>
                 {
-                    b.HasOne("server.Models.SurveyTemplate", "SurveyTemplate")
+                    b.HasOne("server.Models.SurveyTemplate", null)
                         .WithMany("Questions")
-                        .HasForeignKey("SurveyTemplateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("SurveyTemplate");
+                        .HasForeignKey("SurveyTemplateId");
                 });
 
             modelBuilder.Entity("server.Models.SurveyResponse", b =>
@@ -447,32 +519,6 @@ namespace server.Migrations
                         .HasForeignKey("ContactId");
                 });
 
-            modelBuilder.Entity("server.Models.Surveys.SurveyResponseAnswer", b =>
-                {
-                    b.HasOne("server.Models.AnswerOptionTemplate", "AnswerOptionTemplate")
-                        .WithMany()
-                        .HasForeignKey("AnswerOptionTemplateId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("server.Models.SurveyQuestionTemplate", "SurveyQuestionTemplate")
-                        .WithMany()
-                        .HasForeignKey("SurveyQuestionTemplateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.SurveyResponse", "SurveyResponse")
-                        .WithMany("Answers")
-                        .HasForeignKey("SurveyResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AnswerOptionTemplate");
-
-                    b.Navigation("SurveyQuestionTemplate");
-
-                    b.Navigation("SurveyResponse");
-                });
-
             modelBuilder.Entity("server.Models.Contact", b =>
                 {
                     b.Navigation("Messages");
@@ -480,9 +526,9 @@ namespace server.Migrations
                     b.Navigation("Surveys");
                 });
 
-            modelBuilder.Entity("server.Models.SurveyQuestionTemplate", b =>
+            modelBuilder.Entity("server.Models.Question", b =>
                 {
-                    b.Navigation("AnswerOptions");
+                    b.Navigation("PossibleAnswers");
                 });
 
             modelBuilder.Entity("server.Models.SurveyResponse", b =>

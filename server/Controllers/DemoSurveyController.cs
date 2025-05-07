@@ -4,6 +4,7 @@ using server.Services;
 using Microsoft.EntityFrameworkCore;
 using server.data;
 using Vonage.Common;
+using server.Models.Surveys;
 
 namespace server.Controllers
 {
@@ -30,39 +31,35 @@ namespace server.Controllers
                 // Create survey response
                 var surveyResponse = new SurveyResponse
                 {
-                    SurveyId = 1, // Fixed ID for demo survey
+                    SurveyTemplateId = 1, // Fixed ID for demo survey
                     ContactId = submission.ContactId,
                     StartedAt = DateTime.UtcNow,
                     CompletedAt = DateTime.UtcNow,
-                    Answers = new List<Answer>
+                    Answers = new List<SurveyResponseAnswer>
                     {
-                        new Answer
+                        new SurveyResponseAnswer
                         {
-                            QuestionId = 1,
-                            Response = submission.Rating.ToString(),
-                            ContactId = submission.ContactId,
-                            SubmittedAt = DateTime.UtcNow
+                            SurveyQuestionTemplateId = 1,
+                            FreeTextAnswer = submission.Rating.ToString(),
+                            AnsweredAt = DateTime.UtcNow
                         },
-                        new Answer
+                        new SurveyResponseAnswer
                         {
-                            QuestionId = 2,
-                            Response = submission.Recommendation ?? "",
-                            ContactId = submission.ContactId,
-                            SubmittedAt = DateTime.UtcNow
+                            SurveyQuestionTemplateId = 2,
+                            FreeTextAnswer = submission.Recommendation ?? "",
+                            AnsweredAt = DateTime.UtcNow
                         },
-                        new Answer
+                        new SurveyResponseAnswer
                         {
-                            QuestionId = 3,
-                            Response = string.Join(",", submission.Likes),
-                            ContactId = submission.ContactId,
-                            SubmittedAt = DateTime.UtcNow
+                            SurveyQuestionTemplateId = 3,
+                            FreeTextAnswer = string.Join(",", submission.Likes),
+                            AnsweredAt = DateTime.UtcNow
                         },
-                        new Answer
+                        new SurveyResponseAnswer
                         {
-                            QuestionId = 4,
-                            Response = submission.Comments.Suggestions,
-                            ContactId = submission.ContactId,
-                            SubmittedAt = DateTime.UtcNow
+                            SurveyQuestionTemplateId = 4,
+                            FreeTextAnswer = submission.Comments.Suggestions,
+                            AnsweredAt = DateTime.UtcNow
                         }
                     }
                 };
@@ -96,8 +93,8 @@ namespace server.Controllers
         {
             try
             {
-                var questions = await _context.Questions
-                    .Include(q => q.PossibleAnswers)
+                var questions = await _context.QuestionTemplates
+                    .Include(q => q.AnswerOptions)
                     .OrderBy(q => q.OrderInSurvey)
                     .ToListAsync();
 

@@ -19,11 +19,11 @@ namespace server.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<SurveyResponse>> GetSurveyResponsesAsync(int surveyId)
+        public async Task<List<SurveyResponse>> GetSurveyResponsesAsync(int surveyTemp)
         {
             return await _context.SurveyResponses
                 .Include(sr => sr.Answers)
-                .Where(sr => sr.SurveyId == surveyId)
+                .Where(sr => sr.SurveyTemplateId == 0)
                 .ToListAsync();
         }
     }
