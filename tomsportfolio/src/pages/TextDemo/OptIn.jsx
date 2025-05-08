@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import {BaseLayout } from '../../components/Layout';
@@ -21,9 +21,16 @@ const SmsOptIn = ({ workOrderId }) => {
     }));
   };
   //Adding this to check if the server is reachable and to warm up the server from cold start
-  useEffect(async(e) => {
-    var response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/OptIn/Ping`);
-    console.log(response);
+  useEffect(() => {
+    const pingServer = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/OptIn/Ping`);
+        console.log('Server is reachable:', response.data);
+      } catch (error) {
+        console.error('Server is not reachable:', error);
+      }
+    };
+    pingServer();
   }, []);
   
   const handleSubmit = async (e) => {

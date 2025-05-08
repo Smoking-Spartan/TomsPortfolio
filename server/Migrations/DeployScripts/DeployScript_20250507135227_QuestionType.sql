@@ -6,7 +6,7 @@ BEGIN
         CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
     );
 END;
-GO
+
 
 BEGIN TRANSACTION;
 IF NOT EXISTS (
@@ -952,5 +952,5 @@ BEGIN
 END;
 
 COMMIT;
-GO
+
 
