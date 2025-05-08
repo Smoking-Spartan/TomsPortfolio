@@ -73,6 +73,7 @@ public class TestController : ControllerBase
             var sampleData = await _dbContext.Contacts
                 .Take(5)
                 .Select(c => new { c.Id, c.Name, c.PhoneNumber, c.IsActive })
+                .OrderByDescending(c => c.Id)
                 .ToListAsync();
 
             return Ok(new { 

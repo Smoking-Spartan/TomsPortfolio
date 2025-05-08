@@ -19,6 +19,7 @@ namespace server.data
         public DbSet<SmsStatus> SmsStatuses {get; set;}
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageTemplate> MessageTemplates {get; set;}
+        public DbSet<QuestionType> QuestionTypes {get; set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
