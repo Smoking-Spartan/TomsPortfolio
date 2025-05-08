@@ -12,14 +12,9 @@ namespace server.Models
         public SurveyTemplate? SurveyTemplate { get; set; }
         public bool IsRequired { get; set; }
         public int OrderInSurvey { get; set; }
-        public QuestionType Type { get; set; }
+        [ForeignKey("QuestionType")]
+        public int QuestionTypeID {get; set;}
+        public QuestionType? QuestionType { get; set; }
         public List<AnswerOptionTemplate>? AnswerOptions { get; set; }
-    }
-    public enum QuestionType
-    {
-        YesNo,
-        MultipleChoice,
-        Rating,
-        Text
     }
 }

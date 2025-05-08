@@ -20,7 +20,12 @@ const SmsOptIn = ({ workOrderId }) => {
       [name]: value
     }));
   };
-
+  //Adding this to check if the server is reachable and to warm up the server from cold start
+  useEffect(async(e) => {
+    var response = await axios.get(`${import.meta.env.VITE_API_URL_HTTP}/api/OptIn/Ping`);
+    console.log(response);
+  }, []);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Validate phone number length

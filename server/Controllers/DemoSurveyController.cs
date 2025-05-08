@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using server.data;
 using Vonage.Common;
 using server.Models.Surveys;
+using server.Models.DTO;
 
 namespace server.Controllers
 {
@@ -39,31 +40,34 @@ namespace server.Controllers
                     {
                         new SurveyResponseAnswer
                         {
-                            SurveyQuestionTemplateId = 1,
+                            SurveyQuestionTemplateId = 2,
                             FreeTextAnswer = submission.Rating.ToString(),
                             AnsweredAt = DateTime.UtcNow
                         },
                         new SurveyResponseAnswer
                         {
-                            SurveyQuestionTemplateId = 2,
+                            SurveyQuestionTemplateId = 3,
                             FreeTextAnswer = submission.Recommendation ?? "",
                             AnsweredAt = DateTime.UtcNow
                         },
                         new SurveyResponseAnswer
                         {
-                            SurveyQuestionTemplateId = 3,
+                            SurveyQuestionTemplateId = 4,
                             FreeTextAnswer = string.Join(",", submission.Likes),
                             AnsweredAt = DateTime.UtcNow
                         },
                         new SurveyResponseAnswer
                         {
-                            SurveyQuestionTemplateId = 4,
+                            SurveyQuestionTemplateId = 5,
                             FreeTextAnswer = submission.Comments.Suggestions,
                             AnsweredAt = DateTime.UtcNow
                         }
                     }
                 };
-
+                foreach (var a in surveyResponse.Answers)
+                {
+                    Console.WriteLine($"Answer QID: {a.SurveyQuestionTemplateId}");
+                }
                 // Save the response
                 await _surveyService.SaveSurveyResponseAsync(surveyResponse);
 
@@ -86,6 +90,38 @@ namespace server.Controllers
             {
                 return StatusCode(500, new { error = "Failed to submit survey", details = ex.Message });
             }
+        }
+
+        [HttpGet("api/survey/{surveyTemplateId}")]
+        public async Task<IActionResult> GetSurvey(int surveyTemplateId)
+        {
+            var template = await _context.SurveyTemplates
+                .Include(s => s.Questions)
+                .ThenInclude(q => q.AnswerOptions) // Get the answers
+                .FirstOrDefaultAsync(s => s.Id == surveyTemplateId);
+
+            if (template == null) return NotFound();
+
+            var dto = new SurveyDto
+            {
+                SurveyTemplateId = template.Id,
+                Title = template.SurveyName,
+                Questions = template.Questions
+                    .OrderBy(q => q.OrderInSurvey)
+                    .Select(q => new SurveyQuestionDto
+                    {
+                        Id = q.Id,
+                        Text = q.Text,
+                        Type = q.QuestionTypeID.ToString(),
+                        IsRequired = q.IsRequired,
+                        OrderInSurvey = q.OrderInSurvey,
+                        Options = q.QuestionTypeID == (int)QuestionTypeEnum.MultipleChoice 
+                            ? q.AnswerOptions.Select(o => o.Text).ToList()
+                            : null
+                    }).ToList()
+            };
+
+            return Ok(dto);
         }
 
         [HttpGet("questions")]

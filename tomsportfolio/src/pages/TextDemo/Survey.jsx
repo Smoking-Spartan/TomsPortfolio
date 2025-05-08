@@ -51,7 +51,11 @@ const Survey = () => {
       console.error('Error submitting survey:', error);
     }
   };
-
+  useEffect(() => {
+      fetch(`/api/survey/1`)
+        .then(res => res.json())
+        .then(setSurvey);
+  }, []);
   return (
     <div className="survey-container">
       <div className="survey-header">
