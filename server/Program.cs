@@ -58,6 +58,9 @@ builder.Services.AddHttpClient<IMessagingService, MessagingService>();
 // Register SurveyService
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 
+// Register GuidEncoderService
+builder.Services.AddSingleton<IGuidEncoderService, GuidEncoderService>();
+
 // Load configuration
 var configuration = builder.Configuration;
 

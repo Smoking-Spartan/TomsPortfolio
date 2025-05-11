@@ -10,7 +10,7 @@
         public DateTime LastActiveTime { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
-        public List<SurveyTemplate> Surveys { get; set; } = new();
+        public List<SurveyResponse> Surveys { get; set; } = new();
         public List<Message> Messages { get; set; } = new();
     }
 }

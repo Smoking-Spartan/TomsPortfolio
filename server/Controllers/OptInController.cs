@@ -5,6 +5,7 @@ using server.Models;
 using server.Services;
 using server.Helpers;
 using Vonage.Messages;
+using System.Text;
 
 namespace server.Controllers
 {
@@ -15,12 +16,18 @@ namespace server.Controllers
         private readonly ILogger<OptInController> _logger;
         private readonly AppDbContext _context;
         private readonly IMessagingService _messagingService;
+        private readonly IGuidEncoderService _guidEncoder;
 
-        public OptInController(ILogger<OptInController> logger, AppDbContext context, IMessagingService messagingService)
+        public OptInController(
+            ILogger<OptInController> logger, 
+            AppDbContext context, 
+            IMessagingService messagingService,
+            IGuidEncoderService guidEncoder)
         {
             _logger = logger;
             _context = context;
             _messagingService = messagingService;
+            _guidEncoder = guidEncoder;
         }
 
         /// <summary>
@@ -145,6 +152,16 @@ namespace server.Controllers
                 }
                 
                 var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.PhoneNumber == "+" + request.PhoneNumber);
+                
+                // Create a new survey response
+                var surveyResponse = new SurveyResponse
+                {
+                    SurveyTemplateId = 1, // Fixed ID for demo survey
+                    ContactId = contact?.Id ?? 0,
+                    StartedAt = DateTime.UtcNow,
+                    // CompletedAt will be null until they complete the survey
+                };
+
                 // Create message record
                 var message = new Message
                 {
@@ -152,11 +169,16 @@ namespace server.Controllers
                     Content = request.MessageContent,
                     SentAt = DateTime.UtcNow,
                     ContactId = contact?.Id,
-                    MessageTypeID = (int)MessageTypeEnum.OptIn
+                    MessageTypeID = (int)MessageTypeEnum.OptIn,
+                    Url = $"/survey/{_guidEncoder.EncodeGuidToBase64(surveyResponse.ResponseGuid)}" // Use the service
                 };
 
                 try
                 {
+                    // Save the survey response first
+                    await _context.SurveyResponses.AddAsync(surveyResponse);
+                    await _context.SaveChangesAsync();
+
                     // Send the message
                     await _messagingService.SendMessageAsync(message);
                     message.DeliveredAt = DateTime.UtcNow;
