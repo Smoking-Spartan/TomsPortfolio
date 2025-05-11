@@ -15,5 +15,8 @@ namespace server.Models{
         public List<SurveyResponseAnswer>? Answers { get; set; }  // Their answers
         public DateTime StartedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
+
+        [Required]
+        public Guid ResponseGuid { get; set; } = Guid.NewGuid(); // Unique identifier for the response
     }
 }

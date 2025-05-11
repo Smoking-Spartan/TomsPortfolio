@@ -57,6 +57,12 @@ namespace server.data
                 .WithMany(st => st.Questions)
                 .HasForeignKey(qt => qt.SurveyTemplateId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SurveyQuestionTemplate>()
+                .HasMany(qt => qt.AnswerOptions)
+                .WithOne(aot => aot.SurveyQuestionTemplate)
+                .HasForeignKey(aot => aot.SurveyQuestionTemplateId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

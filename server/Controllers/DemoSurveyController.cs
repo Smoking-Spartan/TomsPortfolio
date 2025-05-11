@@ -16,12 +16,14 @@ namespace server.Controllers
         private readonly ISurveyService _surveyService;
         private readonly IMessagingService _messageService;
         private readonly AppDbContext _context;
+        private readonly IGuidEncoderService _guidEncoderService;
 
-        public DemoSurveyController(ISurveyService surveyService, IMessagingService messageService, AppDbContext context)
+        public DemoSurveyController(ISurveyService surveyService, IMessagingService messageService, AppDbContext context, IGuidEncoderService guidEncoderService)
         {
             _surveyService = surveyService;
             _messageService = messageService;
             _context = context;
+            _guidEncoderService = guidEncoderService;
         }
 
         [HttpPost("submit")]
@@ -92,13 +94,20 @@ namespace server.Controllers
             }
         }
 
-        [HttpGet("api/survey/{surveyTemplateId}")]
-        public async Task<IActionResult> GetSurvey(int surveyTemplateId)
+        [HttpGet("{surveyResponseID}")]
+        public async Task<IActionResult> GetSurvey(string surveyResponseID)
         {
+            Guid surveyResponseGuid = _guidEncoderService.DecodeBase64ToGuid(surveyResponseID);
+            var surveyReponse = await _context.SurveyResponses
+                                        .Where(sr => sr.ResponseGuid == surveyResponseGuid)
+                                        .FirstOrDefaultAsync();
+
+            if(surveyReponse == null) return NotFound();
+
             var template = await _context.SurveyTemplates
                 .Include(s => s.Questions)
                 .ThenInclude(q => q.AnswerOptions) // Get the answers
-                .FirstOrDefaultAsync(s => s.Id == surveyTemplateId);
+                .FirstOrDefaultAsync(s => s.Id == surveyReponse.SurveyTemplateId);
 
             if (template == null) return NotFound();
 
@@ -107,18 +116,6 @@ namespace server.Controllers
                 SurveyTemplateId = template.Id,
                 Title = template.SurveyName,
                 Questions = template.Questions
-                    .OrderBy(q => q.OrderInSurvey)
-                    .Select(q => new SurveyQuestionDto
-                    {
-                        Id = q.Id,
-                        Text = q.Text,
-                        Type = q.QuestionTypeID.ToString(),
-                        IsRequired = q.IsRequired,
-                        OrderInSurvey = q.OrderInSurvey,
-                        Options = q.QuestionTypeID == (int)QuestionTypeEnum.MultipleChoice 
-                            ? q.AnswerOptions.Select(o => o.Text).ToList()
-                            : null
-                    }).ToList()
             };
 
             return Ok(dto);

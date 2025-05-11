@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Survey.css';
 
@@ -51,11 +51,11 @@ const Survey = () => {
       console.error('Error submitting survey:', error);
     }
   };
-  useEffect(() => {
-      fetch(`/api/survey/1`)
-        .then(res => res.json())
-        .then(setSurvey);
-  }, []);
+  // useEffect(() => {
+  //     fetch(`/api/survey/1`)
+  //       .then(res => res.json())
+  //       .then(setSurvey);
+  // }, []);
   return (
     <div className="survey-container">
       <div className="survey-header">

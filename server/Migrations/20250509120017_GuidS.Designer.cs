@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.data;
 
@@ -11,9 +12,11 @@ using server.data;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250509120017_GuidS")]
+    partial class GuidS
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,7 @@ namespace server.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            LastActiveTime = new DateTime(2025, 5, 9, 14, 4, 34, 346, DateTimeKind.Utc).AddTicks(8790),
+                            LastActiveTime = new DateTime(2025, 5, 9, 12, 0, 17, 269, DateTimeKind.Utc).AddTicks(9180),
                             Name = "Demo User",
                             OptInTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OptOutTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -344,8 +347,6 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContactId");
-
                     b.HasIndex("SurveyTemplateId");
 
                     b.ToTable("SurveyResponses");
@@ -359,6 +360,9 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ContactId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -367,6 +371,8 @@ namespace server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
 
                     b.ToTable("SurveyTemplates");
 
@@ -475,12 +481,6 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.Models.SurveyResponse", b =>
                 {
-                    b.HasOne("server.Models.Contact", null)
-                        .WithMany("Surveys")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("server.Models.SurveyTemplate", "SurveyTemplate")
                         .WithMany()
                         .HasForeignKey("SurveyTemplateId")
@@ -488,6 +488,13 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("SurveyTemplate");
+                });
+
+            modelBuilder.Entity("server.Models.SurveyTemplate", b =>
+                {
+                    b.HasOne("server.Models.Contact", null)
+                        .WithMany("Surveys")
+                        .HasForeignKey("ContactId");
                 });
 
             modelBuilder.Entity("server.Models.Surveys.SurveyResponseAnswer", b =>
